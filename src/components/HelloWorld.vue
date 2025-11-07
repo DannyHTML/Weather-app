@@ -1,9 +1,10 @@
 <template>
-  <div>test</div>
+    <div>test</div>
+    <button @click="weatherStore.fetchWeather('Hoddesdon')">Get Weather</button>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { useWeatherStore } from '../stores/weather-store';
 
-const test = ref('hello world');
+const weatherStore = useWeatherStore();
 </script>

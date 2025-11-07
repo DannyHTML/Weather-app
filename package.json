@@ -14,7 +14,9 @@
     "clean": "rimraf dist"
   },
   "dependencies": {
-    "@tailwindcss/vite": "^4.1.17"
+    "@tailwindcss/vite": "^4.1.17",
+    "axios": "^1.13.2",
+    "pinia-plugin-persistedstate": "^4.7.1"
   },
   "devDependencies": {
     "@types/node": "^24.6.0",
