@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import HelloWorld from './components/HelloWorld.vue';
+import HeaderSite from './components/header/HeaderSite.vue';
 </script>
 
 <template>
-  <HelloWorld />
+    <main class="container">
+        <HeaderSite />
+    </main>
 </template>
 
 <style scoped></style>
