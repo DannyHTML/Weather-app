@@ -26,12 +26,12 @@
             <div v-if="isOpen" class="absolute right-0 mt-2 w-56" @mouseleave="isOpen = false">
                 <!-- Dropdown content to be added here -->
                 <div class="rounded-md bg-neutral-700 px-3 py-2">
-                    <!-- LOGIC FOR IMPERIAL BUTTON CLICK -->
                     <button
                         type="button"
+                        @click="toggleImperial"
                         class="w-full cursor-pointer rounded-md px-2 text-left duration-150 hover:bg-neutral-600"
                     >
-                        Switch to Imperial
+                        Switch to {{ isImperial ? 'Metric' : 'Imperial' }}
                     </button>
 
                     <DropDownSelect
@@ -57,8 +57,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import DropDownSelect from '../DropDownSelect.vue';
+
+// TODO: Logic to pinia store for measurement units
 
 const temperatureOptions = ['Celsius', 'Fahrenheit'];
 const windSpeedOptions = ['km/h', 'mph'];
@@ -73,4 +75,31 @@ const isOpen = ref(false);
 const toggleDropdown = () => {
     isOpen.value = !isOpen.value;
 };
+
+const isImperial = computed(() => {
+    return (
+        selectedTemperature.value === 'Fahrenheit' &&
+        selectedWindSpeed.value === 'mph' &&
+        selectedPrecipitation.value === 'inches (in)'
+    );
+});
+
+const toggleImperial = () => (isImperial.value ? setMetricMeasurement() : setImperialMeasurement());
+
+const setMetricMeasurement = () => {
+    selectedTemperature.value = 'Celsius';
+    selectedWindSpeed.value = 'km/h';
+    selectedPrecipitation.value = 'Millimeters (mm)';
+};
+
+const setImperialMeasurement = () => {
+    selectedTemperature.value = 'Fahrenheit';
+    selectedWindSpeed.value = 'mph';
+    selectedPrecipitation.value = 'inches (in)';
+};
+
+onMounted(() => {
+    // Set default selections
+    setMetricMeasurement();
+});
 </script>
