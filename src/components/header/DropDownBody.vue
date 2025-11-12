@@ -57,7 +57,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import DropDownSelect from '../DropDownSelect.vue';
 
 const temperatureOptions = ['Celsius', 'Fahrenheit'];
@@ -69,24 +69,28 @@ const selectedWindSpeed = ref('');
 const selectedPrecipitation = ref('');
 
 const isOpen = ref(false);
-const isImperial = ref(false);
 
 const toggleDropdown = () => {
     isOpen.value = !isOpen.value;
 };
 
-const toggleImperial = () => {
-    isImperial.value = !isImperial.value;
-    isImperial.value ? isImperialMeasurement() : isMetricMeasurement();
-};
+const isImperial = computed(() => {
+    return (
+        selectedTemperature.value === 'Fahrenheit' &&
+        selectedWindSpeed.value === 'mph' &&
+        selectedPrecipitation.value === 'inches (in)'
+    );
+});
 
-const isMetricMeasurement = () => {
+const toggleImperial = () => (isImperial.value ? setMetricMeasurement() : setImperialMeasurement());
+
+const setMetricMeasurement = () => {
     selectedTemperature.value = 'Celsius';
     selectedWindSpeed.value = 'km/h';
     selectedPrecipitation.value = 'Millimeters (mm)';
 };
 
-const isImperialMeasurement = () => {
+const setImperialMeasurement = () => {
     selectedTemperature.value = 'Fahrenheit';
     selectedWindSpeed.value = 'mph';
     selectedPrecipitation.value = 'inches (in)';
@@ -94,8 +98,6 @@ const isImperialMeasurement = () => {
 
 onMounted(() => {
     // Set default selections
-    selectedTemperature.value = temperatureOptions[0]!;
-    selectedWindSpeed.value = windSpeedOptions[0]!;
-    selectedPrecipitation.value = precipitationOptions[0]!;
+    setMetricMeasurement();
 });
 </script>
