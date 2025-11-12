@@ -26,14 +26,12 @@
             <div v-if="isOpen" class="absolute right-0 mt-2 w-56" @mouseleave="isOpen = false">
                 <!-- Dropdown content to be added here -->
                 <div class="rounded-md bg-neutral-700 px-3 py-2">
-                    <!-- LOGIC FOR IMPERIAL BUTTON CLICK -->
-                    <!-- // TODO: Ensure metric system loads first -->
-                    <!-- Quick test -->
                     <button
                         type="button"
+                        @click="toggleImperial"
                         class="w-full cursor-pointer rounded-md px-2 text-left duration-150 hover:bg-neutral-600"
                     >
-                        Switch to Imperial
+                        Switch to {{ isImperial ? 'Metric' : 'Imperial' }}
                     </button>
 
                     <DropDownSelect
@@ -59,7 +57,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import DropDownSelect from '../DropDownSelect.vue';
 
 const temperatureOptions = ['Celsius', 'Fahrenheit'];
@@ -71,8 +69,33 @@ const selectedWindSpeed = ref('');
 const selectedPrecipitation = ref('');
 
 const isOpen = ref(false);
+const isImperial = ref(false);
 
 const toggleDropdown = () => {
     isOpen.value = !isOpen.value;
 };
+
+const toggleImperial = () => {
+    isImperial.value = !isImperial.value;
+    isImperial.value ? isImperialMeasurement() : isMetricMeasurement();
+};
+
+const isMetricMeasurement = () => {
+    selectedTemperature.value = 'Celsius';
+    selectedWindSpeed.value = 'km/h';
+    selectedPrecipitation.value = 'Millimeters (mm)';
+};
+
+const isImperialMeasurement = () => {
+    selectedTemperature.value = 'Fahrenheit';
+    selectedWindSpeed.value = 'mph';
+    selectedPrecipitation.value = 'inches (in)';
+};
+
+onMounted(() => {
+    // Set default selections
+    selectedTemperature.value = temperatureOptions[0]!;
+    selectedWindSpeed.value = windSpeedOptions[0]!;
+    selectedPrecipitation.value = precipitationOptions[0]!;
+});
 </script>
