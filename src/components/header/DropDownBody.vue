@@ -60,6 +60,8 @@
 import { ref, onMounted, computed } from 'vue';
 import DropDownSelect from '../DropDownSelect.vue';
 
+// TODO: Logic to pinia store for measurement units
+
 const temperatureOptions = ['Celsius', 'Fahrenheit'];
 const windSpeedOptions = ['km/h', 'mph'];
 const precipitationOptions = ['Millimeters (mm)', 'inches (in)'];
