@@ -1,5 +1,6 @@
 <template>
     <div class="relative text-white">
+        <!-- TODO: Fix the buggy/glitchy dropdown behavior on mobile (touch) -->
         <button
             type="button"
             @click="toggleDropdown"
