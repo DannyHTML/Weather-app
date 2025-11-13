@@ -27,7 +27,7 @@
             <div
                 v-if="isOpen"
                 ref="dropdownRef"
-                class="absolute right-0 mt-2 w-56"
+                class="absolute right-0 z-50 mt-2 w-56"
                 @mouseleave="handleMouseLeave"
             >
                 <!-- Dropdown content to be added here -->

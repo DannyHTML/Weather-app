@@ -4,7 +4,7 @@
             <h1 class="px-2 text-center text-5xl font-bold">How's the sky looking today?</h1>
         </div>
         <div class="mx-auto mt-10 flex flex-col gap-2 md:w-1/2 md:flex-row">
-            <span class="relative">
+            <span class="relative w-full md:w-4/5">
                 <!-- TODO: Fix the layout breakpoint md: and double check on real phone-->
                 <input
                     type="text"
@@ -12,7 +12,7 @@
                     placeholder="Search for a place..."
                     @keyup.enter="weatherStore.fetchWeather(getCity)"
                     v-model="getCity"
-                    class="w-full rounded-md bg-neutral-700 py-2.5 pr-5 pl-10 placeholder:text-neutral-200 focus:outline-none md:w-10/12"
+                    class="w-full rounded-md bg-neutral-700 py-2.5 pr-5 pl-10 placeholder:text-neutral-200 focus:outline-none"
                 />
                 <img
                     src="/src/assets/images/icon-search.svg"

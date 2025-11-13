@@ -36,9 +36,6 @@ export const useWeatherStore = defineStore('weather', () => {
 
             weatherData.value = response.data;
             currentWeatherTemp.value = response.data.current_weather.temperature;
-
-            // console.log('Weather data:', weatherData.value);
-            console.log('Current weather:', currentWeatherTemp.value);
         } catch (err: any) {
             console.error('Error fetching weather data:', err);
             error.value = err.message;
