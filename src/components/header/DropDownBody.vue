@@ -3,8 +3,9 @@
         <!-- TODO: Fix the buggy/glitchy dropdown behavior on mobile (touch) -->
         <button
             type="button"
+            ref="toggleButtonRef"
             @click="toggleDropdown"
-            @mouseover="isOpen = true"
+            @mouseover="handleMouseOver"
             class="flex w-fit cursor-pointer items-center justify-between gap-2 rounded-md bg-neutral-600 px-2 py-1"
         >
             <img src="/src/assets/images/icon-units.svg" alt="icon-units" />
@@ -24,7 +25,12 @@
             leave-from-class="opacity-100 translate-y-0"
             leave-to-class="opacity-0 -translate-y-2"
         >
-            <div v-if="isOpen" class="absolute right-0 mt-2 w-56" @mouseleave="isOpen = false">
+            <div
+                v-if="isOpen"
+                ref="dropdownRef"
+                class="absolute right-0 mt-2 w-56"
+                @mouseleave="handleMouseLeave"
+            >
                 <!-- Dropdown content to be added here -->
                 <div class="rounded-md bg-neutral-700 px-3 py-2">
                     <button
@@ -58,7 +64,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed, useTemplateRef } from 'vue';
+import { onClickOutside } from '@vueuse/core';
 import DropDownSelect from '../DropDownSelect.vue';
 
 // TODO: Logic to pinia store for measurement units
@@ -72,10 +79,38 @@ const selectedWindSpeed = ref('');
 const selectedPrecipitation = ref('');
 
 const isOpen = ref(false);
+const supportHover = ref(false);
 
 const toggleDropdown = () => {
-    isOpen.value = !isOpen.value;
+    if (!supportHover.value) {
+        isOpen.value = !isOpen.value;
+    }
 };
+
+const handleMouseOver = () => {
+    if (supportHover.value) {
+        isOpen.value = true;
+    }
+};
+
+const handleMouseLeave = () => {
+    if (supportHover.value) {
+        isOpen.value = false;
+    }
+};
+
+const dropdownRef = useTemplateRef<HTMLElement>('dropdownRef');
+const toggleButtonRef = useTemplateRef<HTMLElement>('toggleButtonRef');
+
+onClickOutside(
+    dropdownRef,
+    () => {
+        isOpen.value = false;
+    },
+    {
+        ignore: [toggleButtonRef],
+    }
+);
 
 const isImperial = computed(() => {
     return (
@@ -102,5 +137,10 @@ const setImperialMeasurement = () => {
 onMounted(() => {
     // Set default selections
     setMetricMeasurement();
+
+    // Modern, type-safe hover detection
+    supportHover.value = !('ontouchstart' in window || navigator.maxTouchPoints > 0);
+
+    console.log('Support hover:', supportHover.value);
 });
 </script>
