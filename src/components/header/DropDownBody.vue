@@ -1,6 +1,5 @@
 <template>
     <div class="relative text-white">
-        <!-- TODO: Fix the buggy/glitchy dropdown behavior on mobile (touch) -->
         <button
             type="button"
             ref="toggleButtonRef"
@@ -140,7 +139,5 @@ onMounted(() => {
 
     // Modern, type-safe hover detection
     supportHover.value = !('ontouchstart' in window || navigator.maxTouchPoints > 0);
-
-    console.log('Support hover:', supportHover.value);
 });
 </script>
