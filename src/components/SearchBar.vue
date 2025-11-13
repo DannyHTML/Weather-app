@@ -20,7 +20,11 @@
                     class="absolute top-1/2 left-0 ml-3 w-4.5 -translate-y-1/2"
                 />
             </span>
-            <button type="button" class="w-full rounded-md bg-blue-500 p-2.5 md:w-1/5">
+            <button
+                type="button"
+                @click="weatherStore.fetchWeather(getCity)"
+                class="w-full rounded-md bg-blue-500 p-2.5 md:w-1/5"
+            >
                 Search
             </button>
         </div>
