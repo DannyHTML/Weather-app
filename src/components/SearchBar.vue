@@ -5,7 +5,6 @@
         </div>
         <div class="mx-auto mt-10 flex flex-col gap-2 md:w-1/2 md:flex-row">
             <span class="relative w-full md:w-4/5">
-                <!-- TODO: Fix the layout breakpoint md: and double check on real phone-->
                 <input
                     type="text"
                     name="getCity"
