@@ -23,14 +23,10 @@
             <button
                 type="button"
                 @click="weatherStore.fetchWeather(getCity)"
-                class="w-full rounded-md bg-blue-500 p-2.5 md:w-1/5"
+                class="w-full cursor-pointer rounded-md bg-blue-500 p-2.5 md:w-1/5"
             >
                 Search
             </button>
-        </div>
-        <div>Temperature: {{ weatherStore.currentWeatherTemp }}</div>
-        <div>
-            {{ getCity }}
         </div>
     </div>
 </template>
