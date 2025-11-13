@@ -3,14 +3,16 @@
         <div class="my-3 text-white">
             <h1 class="px-2 text-center text-5xl font-bold">How's the sky looking today?</h1>
         </div>
-        <div class="mt-10 flex flex-col gap-2">
+        <div class="mx-auto mt-10 flex flex-col gap-2 md:w-1/2 md:flex-row">
             <span class="relative">
+                <!-- TODO: Fix the layout breakpoint md: -->
                 <input
                     type="text"
+                    name="getCity"
                     placeholder="Search for a place..."
                     @keyup.enter="weatherStore.fetchWeather(getCity)"
                     v-model="getCity"
-                    class="relative w-full rounded-md bg-neutral-700 py-2.5 pr-5 pl-10 placeholder:text-neutral-200 focus:outline-none"
+                    class="w-full rounded-md bg-neutral-700 py-2.5 pr-5 pl-10 placeholder:text-neutral-200 focus:outline-none md:w-10/12"
                 />
                 <img
                     src="/src/assets/images/icon-search.svg"
@@ -18,7 +20,9 @@
                     class="absolute top-1/2 left-0 ml-3 w-4.5 -translate-y-1/2"
                 />
             </span>
-            <button type="button" class="w-full rounded-md bg-blue-500 p-2.5">Search</button>
+            <button type="button" class="w-full rounded-md bg-blue-500 p-2.5 md:w-1/5">
+                Search
+            </button>
         </div>
         <div>Temperature: {{ weatherStore.currentWeatherTemp }}</div>
         <div>
