@@ -4,14 +4,20 @@ import axios from 'axios';
 
 export const useWeatherStore = defineStore('weather', () => {
     const weatherData = ref(null);
-    const getCity = ref('');
-    const getCountry = ref('');
-    const currentWeatherTemp = ref('');
-    const currentWeatherUnit = ref('');
-    const currentISOCode = ref('');
-    const currentTimezone = ref('');
-    const loading = ref(false);
+    const getCity = ref<string>('');
+    const getCountry = ref<string>('');
+    const currentWeatherTemp = ref<number>(0);
+    const currentWeatherUnit = ref<string>('');
+    const currentISOCode = ref<string>('');
+    const currentTimezone = ref<string>('');
+    const loading = ref<boolean>(false);
     const error = ref<string | null>(null);
+
+    // TODO: MAKE NEW ISSUE!
+    // TODO: Based on toggle dropdown, change the unit from metric to imperial
+    // const currentWeatherTempF = computed(() => {
+    //     return (currentWeatherTemp.value * 9) / 5 + 32;
+    // });
 
     async function fetchWeather(city: string) {
         loading.value = true;
@@ -28,8 +34,6 @@ export const useWeatherStore = defineStore('weather', () => {
             }
 
             const { latitude, longitude, country } = geoRes.data.results[0];
-            console.log('Geocoding response:', geoRes.data);
-            console.log(`Coordinates for ${city}:`, latitude, longitude, country);
 
             // Step 2: Fetch forecast using coordinates
             const response = await axios.get('https://api.open-meteo.com/v1/forecast', {
@@ -41,17 +45,15 @@ export const useWeatherStore = defineStore('weather', () => {
                 },
             });
             //  TODO: Convert the imperial units myself instead of doing a separate API call
-            console.log('Weather API response:', response);
 
-            weatherData.value = response.data;
-            console.log('Fetched weather data:', response.data);
             getCity.value = city;
             getCountry.value = country;
             currentWeatherTemp.value = response.data.current_weather.temperature;
             currentWeatherUnit.value = response.data.current_weather_units.temperature;
             currentISOCode.value = response.data.current_weather_units.time;
             currentTimezone.value = response.data.current_weather.time;
-            console.log(currentISOCode.value, currentTimezone.value);
+
+            console.log(currentWeatherUnit.value);
         } catch (err: any) {
             console.error('Error fetching weather data:', err);
             error.value = err.message;

@@ -28,6 +28,7 @@
                         />
                         <span class="block text-5xl font-bold"
                             >{{ todayTemperature }} {{ temperatureUnit }}
+                            {{ weatherStore.currentWeatherUnitFahrenheit }}
                         </span>
                     </div>
                 </div>
@@ -56,7 +57,7 @@ defineProps({
         required: true,
     },
     todayTemperature: {
-        type: String,
+        type: Number,
         required: true,
     },
     temperatureUnit: {
