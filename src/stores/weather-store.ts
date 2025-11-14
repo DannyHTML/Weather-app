@@ -55,7 +55,6 @@ export const useWeatherStore = defineStore('weather', () => {
     }
 
     return {
-        weatherData,
         loading,
         fetchWeather,
         currentWeatherTemp,
@@ -63,5 +62,6 @@ export const useWeatherStore = defineStore('weather', () => {
         getCity,
         currentTimezone,
         currentISOCode,
+        error,
     };
 });

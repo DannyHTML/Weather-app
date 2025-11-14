@@ -20,7 +20,7 @@ const weatherStore = useWeatherStore();
 const { formatDate } = useFormattedDate();
 
 const formattedDate = computed(() => {
-    return formatDate(weatherStore.currentTimezone, weatherStore.weatherData?.timezone, true);
+    return formatDate(weatherStore.currentTimezone);
 });
 
 console.log(formattedDate.value);
