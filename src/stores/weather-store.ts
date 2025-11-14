@@ -40,6 +40,7 @@ export const useWeatherStore = defineStore('weather', () => {
                     hourly: 'temperature_2m,relative_humidity_2m',
                 },
             });
+            //  TODO: Convert the imperial units myself instead of doing a separate API call
             console.log('Weather API response:', response);
 
             weatherData.value = response.data;
