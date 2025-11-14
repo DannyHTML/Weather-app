@@ -5,6 +5,7 @@ import axios from 'axios';
 export const useWeatherStore = defineStore('weather', () => {
     const weatherData = ref(null);
     const getCity = ref('');
+    const getCountry = ref('');
     const currentWeatherTemp = ref('');
     const currentWeatherUnit = ref('');
     const currentISOCode = ref('');
@@ -26,7 +27,9 @@ export const useWeatherStore = defineStore('weather', () => {
                 throw new Error(`City "${city}" not found`);
             }
 
-            const { latitude, longitude } = geoRes.data.results[0];
+            const { latitude, longitude, country } = geoRes.data.results[0];
+            console.log('Geocoding response:', geoRes.data);
+            console.log(`Coordinates for ${city}:`, latitude, longitude, country);
 
             // Step 2: Fetch forecast using coordinates
             const response = await axios.get('https://api.open-meteo.com/v1/forecast', {
@@ -37,10 +40,12 @@ export const useWeatherStore = defineStore('weather', () => {
                     hourly: 'temperature_2m,relative_humidity_2m',
                 },
             });
+            console.log('Weather API response:', response);
 
             weatherData.value = response.data;
             console.log('Fetched weather data:', response.data);
             getCity.value = city;
+            getCountry.value = country;
             currentWeatherTemp.value = response.data.current_weather.temperature;
             currentWeatherUnit.value = response.data.current_weather_units.temperature;
             currentISOCode.value = response.data.current_weather_units.time;
@@ -55,6 +60,7 @@ export const useWeatherStore = defineStore('weather', () => {
     }
 
     return {
+        weatherData,
         loading,
         fetchWeather,
         currentWeatherTemp,
@@ -63,5 +69,6 @@ export const useWeatherStore = defineStore('weather', () => {
         currentTimezone,
         currentISOCode,
         error,
+        getCountry,
     };
 });

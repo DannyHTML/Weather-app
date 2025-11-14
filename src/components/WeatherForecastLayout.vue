@@ -3,6 +3,7 @@
         <!-- Layout for the weather forecast -->
         <MainWeatherForecast
             :location="weatherStore.getCity"
+            :country="weatherStore.getCountry"
             :todayDate="formattedDate"
             :todayTemperature="weatherStore.currentWeatherTemp"
             :temperatureUnit="weatherStore.currentWeatherUnit"
