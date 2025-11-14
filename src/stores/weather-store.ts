@@ -4,7 +4,11 @@ import axios from 'axios';
 
 export const useWeatherStore = defineStore('weather', () => {
     const weatherData = ref(null);
-    const currentWeatherTemp = ref(null);
+    const getCity = ref('');
+    const currentWeatherTemp = ref('');
+    const currentWeatherUnit = ref('');
+    const currentISOCode = ref('');
+    const currentTimezone = ref('');
     const loading = ref(false);
     const error = ref<string | null>(null);
 
@@ -35,7 +39,13 @@ export const useWeatherStore = defineStore('weather', () => {
             });
 
             weatherData.value = response.data;
+            console.log('Fetched weather data:', response.data);
+            getCity.value = city;
             currentWeatherTemp.value = response.data.current_weather.temperature;
+            currentWeatherUnit.value = response.data.current_weather_units.temperature;
+            currentISOCode.value = response.data.current_weather_units.time;
+            currentTimezone.value = response.data.current_weather.time;
+            console.log(currentISOCode.value, currentTimezone.value);
         } catch (err: any) {
             console.error('Error fetching weather data:', err);
             error.value = err.message;
@@ -49,5 +59,9 @@ export const useWeatherStore = defineStore('weather', () => {
         loading,
         fetchWeather,
         currentWeatherTemp,
+        currentWeatherUnit,
+        getCity,
+        currentTimezone,
+        currentISOCode,
     };
 });

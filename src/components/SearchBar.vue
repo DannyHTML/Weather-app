@@ -9,8 +9,8 @@
                     type="text"
                     name="getCity"
                     placeholder="Search for a place..."
-                    @keyup.enter="weatherStore.fetchWeather(getCity)"
-                    v-model="getCity"
+                    @keyup.enter="weatherStore.fetchWeather(inputCity)"
+                    v-model="inputCity"
                     class="w-full rounded-md bg-neutral-700 py-2.5 pr-5 pl-10 placeholder:text-neutral-200 focus:outline-none"
                 />
                 <img
@@ -21,7 +21,7 @@
             </span>
             <button
                 type="button"
-                @click="weatherStore.fetchWeather(getCity)"
+                @click="weatherStore.fetchWeather(inputCity)"
                 class="w-full cursor-pointer rounded-md bg-blue-500 p-2.5 md:w-1/5"
             >
                 Search
@@ -34,7 +34,7 @@
 import { ref } from 'vue';
 import { useWeatherStore } from '../stores/weather-store';
 
-const getCity = ref('');
+const inputCity = ref('');
 
 const weatherStore = useWeatherStore();
 </script>
