@@ -6,10 +6,12 @@ export const useWeatherStore = defineStore('weather', () => {
     const weatherData = ref(null);
     const getCity = ref<string>('');
     const getCountry = ref<string>('');
-    const currentWeatherTemp = ref<number>(0);
-    const currentWeatherUnit = ref<string>('');
-    const currentISOCode = ref<string>('');
-    const currentTimezone = ref<string>('');
+    const weatherTemp = ref<number>(0);
+    const apparentTemperature = ref<number>(0);
+    const windSpeed = ref<number>(0);
+    const weatherUnit = ref<string>('');
+    const ISOCode = ref<string>('');
+    const timezone = ref<string>('');
     const loading = ref<boolean>(false);
     const error = ref<string | null>(null);
 
@@ -41,19 +43,41 @@ export const useWeatherStore = defineStore('weather', () => {
                     latitude,
                     longitude,
                     current_weather: true,
-                    hourly: 'temperature_2m,relative_humidity_2m',
+                    hourly: 'temperature_2m,relative_humidity_2m,precipitation,apparent_temperature',
                 },
             });
-            //  TODO: Convert the imperial units myself instead of doing a separate API call
+
+            const data = response.data;
 
             getCity.value = city;
             getCountry.value = country;
-            currentWeatherTemp.value = response.data.current_weather.temperature;
-            currentWeatherUnit.value = response.data.current_weather_units.temperature;
-            currentISOCode.value = response.data.current_weather_units.time;
-            currentTimezone.value = response.data.current_weather.time;
 
-            console.log(currentWeatherUnit.value);
+            // TODO: Fix the wind speed unit issue and correct data for the 4 block layout
+
+            // Current temperature
+            weatherTemp.value = data.current_weather.temperature;
+            weatherUnit.value = data.current_weather_units.temperature;
+            ISOCode.value = data.current_weather_units.time;
+            timezone.value = data.current_weather.time;
+
+            // Extract current apparent temperature from hourly array
+            const currentTime = new Date(data.current_weather.time);
+            const hourlyTimes = data.hourly.time.map((t: string) => new Date(t));
+
+            // Find the index of the hourly time that matches the current hour
+            const currentIndex = hourlyTimes.findIndex(
+                (t: Date) =>
+                    t.getUTCFullYear() === currentTime.getUTCFullYear() &&
+                    t.getUTCMonth() === currentTime.getUTCMonth() &&
+                    t.getUTCDate() === currentTime.getUTCDate() &&
+                    t.getUTCHours() === currentTime.getUTCHours()
+            );
+
+            apparentTemperature.value =
+                currentIndex !== -1 ? data.hourly.apparent_temperature[currentIndex] : 0;
+
+            console.log('Weather data:', data);
+            console.log('Current apparent temperature:', apparentTemperature.value);
         } catch (err: any) {
             console.error('Error fetching weather data:', err);
             error.value = err.message;
@@ -66,12 +90,14 @@ export const useWeatherStore = defineStore('weather', () => {
         weatherData,
         loading,
         fetchWeather,
-        currentWeatherTemp,
-        currentWeatherUnit,
+        weatherTemp,
+        weatherUnit,
         getCity,
-        currentTimezone,
-        currentISOCode,
+        timezone,
+        ISOCode,
         error,
         getCountry,
+        windSpeed,
+        apparentTemperature,
     };
 });

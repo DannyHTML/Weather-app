@@ -5,31 +5,38 @@
             :location="weatherStore.getCity"
             :country="weatherStore.getCountry"
             :todayDate="formattedDate"
-            :todayTemperature="weatherStore.currentWeatherTemp"
-            :temperatureUnit="weatherStore.currentWeatherUnit"
+            :todayTemperature="weatherStore.weatherTemp"
+            :temperatureUnit="weatherStore.weatherUnit"
         />
 
-        <div class="my-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
-            <ExtraWeatherInfoLayout
-                v-for="data in dummyData"
-                :key="data.id"
-                :title="data.title"
-                :currentWeatherAmount="data.currentWeatherAmount"
-                :weatherUnit="data.weatherUnit"
+        <div class="my-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
+            <CardComponent
+                :title="'Feels like'"
+                :currentWeatherAmount="weatherStore.apparentTemperature"
+                :weatherUnit="weatherStore.weatherUnit"
+            />
+
+            <CardComponent
+                :title="'Humidity'"
+                :currentWeatherAmount="weatherStore.windSpeed"
+                :weatherUnit="weatherStore.weatherUnit"
+            />
+
+            <CardComponent
+                :title="'Wind'"
+                :currentWeatherAmount="weatherStore.windSpeed"
+                :weatherUnit="weatherStore.weatherUnit"
+            />
+
+            <CardComponent
+                :title="'Precipitation'"
+                :currentWeatherAmount="weatherStore.windSpeed"
+                :weatherUnit="weatherStore.weatherUnit"
             />
         </div>
 
-        <div>test</div>
-
-        <div class="my-3 grid grid-cols-3 gap-3 sm:grid-cols-7">
-            <ExtraWeatherInfoLayout
-                v-for="data in dummyData"
-                :key="data.id"
-                :title="data.title"
-                :currentWeatherAmount="data.currentWeatherAmount"
-                :weatherUnit="data.weatherUnit"
-                :image="data.image"
-            />
+        <div>
+            <h2 class="text-lg font-bold text-neutral-300">Daily forecast</h2>
         </div>
     </div>
 </template>
@@ -39,42 +46,13 @@ import { computed } from 'vue';
 import MainWeatherForecast from './MainWeatherForecast.vue';
 import { useWeatherStore } from '../stores/weather-store';
 import { useFormattedDate } from '../composables/useFormattedDate';
-import ExtraWeatherInfoLayout from './ExtraWeatherInfoLayout.vue';
-
-const dummyData = [
-    {
-        title: 'Feels like',
-        currentWeatherAmount: 18,
-        weatherUnit: '°',
-        image: '/src/assets/images/icon-rain.webp',
-        id: 1,
-    },
-    {
-        title: 'Humidity',
-        currentWeatherAmount: 46,
-        weatherUnit: '%',
-        image: '/src/assets/images/icon-sunny.webp',
-        id: 2,
-    },
-    {
-        title: 'Wind',
-        currentWeatherAmount: 14,
-        weatherUnit: 'km/h',
-        id: 3,
-    },
-    {
-        title: 'precipitation',
-        currentWeatherAmount: 0,
-        weatherUnit: 'mm',
-        id: 4,
-    },
-];
+import CardComponent from './CardComponent.vue';
 
 const weatherStore = useWeatherStore();
 const { formatDate } = useFormattedDate();
 
 const formattedDate = computed(() => {
-    return formatDate(weatherStore.currentTimezone);
+    return formatDate(weatherStore.timezone);
 });
 
 console.log(formattedDate.value);
