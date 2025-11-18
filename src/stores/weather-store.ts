@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import axios from 'axios';
 
 export const useWeatherStore = defineStore('weather', () => {
@@ -8,25 +8,50 @@ export const useWeatherStore = defineStore('weather', () => {
     const getCountry = ref<string>('');
     const weatherTemp = ref<number>(0);
     const apparentTemperature = ref<number>(0);
+    const humidity = ref<number>(0);
     const windSpeed = ref<number>(0);
-    const weatherUnit = ref<string>('');
-    const ISOCode = ref<string>('');
-    const timezone = ref<string>('');
+    const precipitation = ref<number>(0);
+    const unitSystem = ref<'metric' | 'imperial'>('metric'); // new toggle
     const loading = ref<boolean>(false);
     const error = ref<string | null>(null);
+    const timezone = ref<string>('');
+    const ISOCode = ref<string>('');
 
-    // TODO: MAKE NEW ISSUE!
-    // TODO: Based on toggle dropdown, change the unit from metric to imperial
-    // const currentWeatherTempF = computed(() => {
-    //     return (currentWeatherTemp.value * 9) / 5 + 32;
-    // });
+    // Computed units
+    const tempUnit = computed(() => (unitSystem.value === 'metric' ? '°C' : '°F'));
+    const windUnit = computed(() => (unitSystem.value === 'metric' ? 'km/h' : 'mph'));
+    const precipitationUnit = computed(() => (unitSystem.value === 'metric' ? 'mm' : 'inches'));
+
+    const tempUnitSystem = ref<'metric' | 'imperial'>('metric');
+    const windUnitSystem = ref<'metric' | 'imperial'>('metric');
+    const precipitationUnitSystem = ref<'metric' | 'imperial'>('metric');
+
+    // Computed converted values
+    const temperatureDisplay = computed(() =>
+        tempUnitSystem.value === 'metric' ? weatherTemp.value : (weatherTemp.value * 9) / 5 + 32
+    );
+    const apparentTemperatureDisplay = computed(() =>
+        tempUnitSystem.value === 'metric'
+            ? apparentTemperature.value
+            : (apparentTemperature.value * 9) / 5 + 32
+    );
+
+    const windSpeedDisplay = computed(() =>
+        windUnitSystem.value === 'metric' ? windSpeed.value : windSpeed.value * 2.23694
+    );
+
+    const precipitationDisplay = computed(() =>
+        precipitationUnitSystem.value === 'metric'
+            ? precipitation.value
+            : precipitation.value / 25.4
+    );
 
     async function fetchWeather(city: string) {
         loading.value = true;
         error.value = null;
 
         try {
-            // Step 1: Get coordinates from city name
+            // Step 1: Get coordinates
             const geoRes = await axios.get('https://geocoding-api.open-meteo.com/v1/search', {
                 params: { name: city, count: 1 },
             });
@@ -37,34 +62,30 @@ export const useWeatherStore = defineStore('weather', () => {
 
             const { latitude, longitude, country } = geoRes.data.results[0];
 
-            // Step 2: Fetch forecast using coordinates
+            // Step 2: Fetch forecast
             const response = await axios.get('https://api.open-meteo.com/v1/forecast', {
                 params: {
                     latitude,
                     longitude,
                     current_weather: true,
-                    hourly: 'temperature_2m,relative_humidity_2m,precipitation,apparent_temperature',
+                    hourly: 'temperature_2m,relative_humidity_2m,precipitation,apparent_temperature,windspeed_10m',
                 },
             });
 
             const data = response.data;
-
             getCity.value = city;
             getCountry.value = country;
-
-            // TODO: Fix the wind speed unit issue and correct data for the 4 block layout
-
-            // Current temperature
-            weatherTemp.value = data.current_weather.temperature;
-            weatherUnit.value = data.current_weather_units.temperature;
-            ISOCode.value = data.current_weather_units.time;
             timezone.value = data.current_weather.time;
+            ISOCode.value = data.current_weather_units.time;
 
-            // Extract current apparent temperature from hourly array
+            // Current temperature and wind speed
+            weatherTemp.value = data.current_weather.temperature;
+            windSpeed.value = data.current_weather.windspeed;
+
+            // Map current hour to hourly arrays
             const currentTime = new Date(data.current_weather.time);
             const hourlyTimes = data.hourly.time.map((t: string) => new Date(t));
 
-            // Find the index of the hourly time that matches the current hour
             const currentIndex = hourlyTimes.findIndex(
                 (t: Date) =>
                     t.getUTCFullYear() === currentTime.getUTCFullYear() &&
@@ -73,11 +94,16 @@ export const useWeatherStore = defineStore('weather', () => {
                     t.getUTCHours() === currentTime.getUTCHours()
             );
 
+            // Extract current values
             apparentTemperature.value =
                 currentIndex !== -1 ? data.hourly.apparent_temperature[currentIndex] : 0;
-
-            console.log('Weather data:', data);
-            console.log('Current apparent temperature:', apparentTemperature.value);
+            humidity.value =
+                currentIndex !== -1 ? data.hourly.relative_humidity_2m[currentIndex] : 0;
+            precipitation.value = currentIndex !== -1 ? data.hourly.precipitation[currentIndex] : 0;
+            windSpeed.value =
+                currentIndex !== -1 && data.hourly.windspeed_10m
+                    ? data.hourly.windspeed_10m[currentIndex]
+                    : windSpeed.value;
         } catch (err: any) {
             console.error('Error fetching weather data:', err);
             error.value = err.message;
@@ -90,14 +116,28 @@ export const useWeatherStore = defineStore('weather', () => {
         weatherData,
         loading,
         fetchWeather,
-        weatherTemp,
-        weatherUnit,
         getCity,
+        getCountry,
         timezone,
         ISOCode,
         error,
-        getCountry,
-        windSpeed,
+        unitSystem,
+        // raw values
+        weatherTemp,
         apparentTemperature,
+        humidity,
+        windSpeed,
+        precipitation,
+        // computed displays
+        temperatureDisplay,
+        apparentTemperatureDisplay,
+        windSpeedDisplay,
+        precipitationDisplay,
+        tempUnit,
+        windUnit,
+        precipitationUnit,
+        tempUnitSystem,
+        windUnitSystem,
+        precipitationUnitSystem,
     };
 });

@@ -5,33 +5,33 @@
             :location="weatherStore.getCity"
             :country="weatherStore.getCountry"
             :todayDate="formattedDate"
-            :todayTemperature="weatherStore.weatherTemp"
-            :temperatureUnit="weatherStore.weatherUnit"
+            :todayTemperature="weatherStore.temperatureDisplay"
+            :temperatureUnit="weatherStore.tempUnit"
         />
 
         <div class="my-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
             <CardComponent
                 :title="'Feels like'"
-                :currentWeatherAmount="weatherStore.apparentTemperature"
-                :weatherUnit="weatherStore.weatherUnit"
+                :currentWeatherAmount="weatherStore.apparentTemperatureDisplay"
+                :weatherUnit="weatherStore.tempUnit"
             />
 
             <CardComponent
                 :title="'Humidity'"
-                :currentWeatherAmount="weatherStore.windSpeed"
-                :weatherUnit="weatherStore.weatherUnit"
+                :currentWeatherAmount="weatherStore.humidity"
+                :weatherUnit="'%'"
             />
 
             <CardComponent
                 :title="'Wind'"
-                :currentWeatherAmount="weatherStore.windSpeed"
-                :weatherUnit="weatherStore.weatherUnit"
+                :currentWeatherAmount="weatherStore.windSpeedDisplay"
+                :weatherUnit="weatherStore.windUnit"
             />
 
             <CardComponent
                 :title="'Precipitation'"
-                :currentWeatherAmount="weatherStore.windSpeed"
-                :weatherUnit="weatherStore.weatherUnit"
+                :currentWeatherAmount="weatherStore.precipitationDisplay"
+                :weatherUnit="weatherStore.precipitationUnit"
             />
         </div>
 
