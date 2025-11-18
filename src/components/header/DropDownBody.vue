@@ -62,6 +62,7 @@
     </div>
 </template>
 
+<!-- TODO: Gotta work on individual unit watchers -->
 <script setup lang="ts">
 import { ref, onMounted, computed, watch, useTemplateRef } from 'vue';
 import { onClickOutside } from '@vueuse/core';
@@ -163,7 +164,7 @@ watch(
         else setImperialMeasurement();
     }
 );
-// Gotta work on individual unit watchers
+// TODO: Gotta work on individual unit watchers
 
 // Watch local dropdown refs and update store
 watch(selectedTemperature, (newVal) => {
