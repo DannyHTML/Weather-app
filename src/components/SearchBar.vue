@@ -9,8 +9,8 @@
                     type="text"
                     name="getCity"
                     placeholder="Search for a place..."
-                    @keyup.enter="weatherStore.fetchWeather(getCity)"
-                    v-model="getCity"
+                    @keyup.enter="(weatherStore.fetchWeather(inputCity), (inputCity = ''))"
+                    v-model="inputCity"
                     class="w-full rounded-md bg-neutral-700 py-2.5 pr-5 pl-10 placeholder:text-neutral-200 focus:outline-none"
                 />
                 <img
@@ -21,10 +21,17 @@
             </span>
             <button
                 type="button"
-                @click="weatherStore.fetchWeather(getCity)"
-                class="w-full cursor-pointer rounded-md bg-blue-500 p-2.5 md:w-1/5"
+                @click="(weatherStore.fetchWeather(inputCity), (inputCity = ''))"
+                class="flex w-full cursor-pointer justify-center rounded-md bg-blue-500 p-2.5 md:w-1/5"
             >
-                Search
+                <template v-if="weatherStore.loading">
+                    <img
+                        class="flex h-6 animate-spin justify-center"
+                        src="/src/assets/images/icon-loading.svg"
+                        alt="icon loading"
+                    />
+                </template>
+                <template v-else> Search </template>
             </button>
         </div>
     </div>
@@ -34,7 +41,7 @@
 import { ref } from 'vue';
 import { useWeatherStore } from '../stores/weather-store';
 
-const getCity = ref('');
+const inputCity = ref<string>('');
 
 const weatherStore = useWeatherStore();
 </script>

@@ -4,9 +4,20 @@ import axios from 'axios';
 
 export const useWeatherStore = defineStore('weather', () => {
     const weatherData = ref(null);
-    const currentWeatherTemp = ref(null);
-    const loading = ref(false);
+    const getCity = ref<string>('');
+    const getCountry = ref<string>('');
+    const currentWeatherTemp = ref<number>(0);
+    const currentWeatherUnit = ref<string>('');
+    const currentISOCode = ref<string>('');
+    const currentTimezone = ref<string>('');
+    const loading = ref<boolean>(false);
     const error = ref<string | null>(null);
+
+    // TODO: MAKE NEW ISSUE!
+    // TODO: Based on toggle dropdown, change the unit from metric to imperial
+    // const currentWeatherTempF = computed(() => {
+    //     return (currentWeatherTemp.value * 9) / 5 + 32;
+    // });
 
     async function fetchWeather(city: string) {
         loading.value = true;
@@ -22,7 +33,7 @@ export const useWeatherStore = defineStore('weather', () => {
                 throw new Error(`City "${city}" not found`);
             }
 
-            const { latitude, longitude } = geoRes.data.results[0];
+            const { latitude, longitude, country } = geoRes.data.results[0];
 
             // Step 2: Fetch forecast using coordinates
             const response = await axios.get('https://api.open-meteo.com/v1/forecast', {
@@ -33,9 +44,16 @@ export const useWeatherStore = defineStore('weather', () => {
                     hourly: 'temperature_2m,relative_humidity_2m',
                 },
             });
+            //  TODO: Convert the imperial units myself instead of doing a separate API call
 
-            weatherData.value = response.data;
+            getCity.value = city;
+            getCountry.value = country;
             currentWeatherTemp.value = response.data.current_weather.temperature;
+            currentWeatherUnit.value = response.data.current_weather_units.temperature;
+            currentISOCode.value = response.data.current_weather_units.time;
+            currentTimezone.value = response.data.current_weather.time;
+
+            console.log(currentWeatherUnit.value);
         } catch (err: any) {
             console.error('Error fetching weather data:', err);
             error.value = err.message;
@@ -49,5 +67,11 @@ export const useWeatherStore = defineStore('weather', () => {
         loading,
         fetchWeather,
         currentWeatherTemp,
+        currentWeatherUnit,
+        getCity,
+        currentTimezone,
+        currentISOCode,
+        error,
+        getCountry,
     };
 });
