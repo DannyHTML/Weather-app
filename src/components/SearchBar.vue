@@ -41,7 +41,7 @@
 import { ref } from 'vue';
 import { useWeatherStore } from '../stores/weather-store';
 
-const inputCity = ref('');
+const inputCity = ref<string>('');
 
 const weatherStore = useWeatherStore();
 </script>
