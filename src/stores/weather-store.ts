@@ -59,6 +59,7 @@ export const useWeatherStore = defineStore('weather', () => {
         if (code === 1) return 'mostly_clear';
         if (code === 2) return 'partly_cloudy';
         if (code === 3) return 'overcast';
+        // test
 
         if (code === 45 || code === 48) return 'fog';
 
