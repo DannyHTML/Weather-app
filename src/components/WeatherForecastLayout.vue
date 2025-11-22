@@ -35,8 +35,19 @@
             />
         </div>
 
-        <div>
-            <h2 class="text-lg font-bold text-neutral-300">Daily forecast</h2>
+        <h2 class="mb-2.5 text-lg font-bold text-neutral-200">Daily forecast</h2>
+
+        <!-- Daily forecast section -->
+        <div class="mt-2 grid grid-cols-3 gap-3 sm:grid-cols-6">
+            <CardComponent
+                v-for="(day, index) in weatherStore.weeklyForecast"
+                :key="index"
+                :title="day.weekday"
+                :image="day.icon"
+                :tempMin="day.tempMin"
+                :tempMax="day.tempMax"
+                :weatherUnit="weatherStore.tempUnit"
+            />
         </div>
     </div>
 </template>
@@ -55,5 +66,5 @@ const formattedDate = computed(() => {
     return formatDate(weatherStore.timezone);
 });
 
-console.log(formattedDate.value);
+console.log(weatherStore.weeklyForecast);
 </script>

@@ -2,13 +2,22 @@
     <div class="rounded-lg bg-neutral-800 p-2 text-sm">
         <span :class="['block', image ? 'text-center' : 'mb-5']"> {{ title }} </span>
         <template v-if="image">
-            <span class="flex justify-center">
-                <img :src="image" alt="" class="w-12" />
-            </span>
+            <div class="my-2 flex justify-center">
+                <img :src="image" alt="weather icon" class="w-14" />
+            </div>
         </template>
 
-        <span>{{ currentWeatherAmount }} {{ weatherUnit }}</span>
-
+        <template v-if="currentWeatherAmount">
+            <div class="flex items-center justify-between">
+                <span>{{ currentWeatherAmount }} {{ weatherUnit }}</span>
+            </div>
+        </template>
+        <template v-else>
+            <div class="flex w-full items-center justify-between">
+                <span class="block">{{ tempMin }} {{ weatherUnit }}</span>
+                <span class="block">{{ tempMax }} {{ weatherUnit }}</span>
+            </div>
+        </template>
         <!-- <span> weather info </span> -->
     </div>
 </template>
@@ -22,16 +31,25 @@ defineProps({
         required: true,
     },
     image: {
-        type: String,
+        type: [String, null],
         required: false,
     },
     currentWeatherAmount: {
         type: Number,
-        required: true,
+        required: false,
+        default: null,
     },
     weatherUnit: {
         type: String,
         required: true,
+    },
+    tempMax: {
+        type: Number,
+        required: false,
+    },
+    tempMin: {
+        type: Number,
+        required: false,
     },
 });
 </script>
