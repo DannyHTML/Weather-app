@@ -55,6 +55,7 @@ export const useWeatherStore = defineStore('weather', () => {
             const geoRes = await axios.get('https://geocoding-api.open-meteo.com/v1/search', {
                 params: { name: city, count: 1 },
             });
+            // test
 
             if (!geoRes.data.results || geoRes.data.results.length === 0) {
                 throw new Error(`City "${city}" not found`);
