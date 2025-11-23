@@ -27,7 +27,7 @@ export const useWeatherStore = defineStore('weather', () => {
     // Units
     // --------------------------------------------------
 
-    const tempUnit = computed(() => (unitSystem.value === 'metric' ? '°C' : '°F'));
+    const tempUnit = computed(() => (unitSystem.value === 'metric' ? '°' : '°F'));
     const windUnit = computed(() => (unitSystem.value === 'metric' ? 'km/h' : 'mph'));
     const precipitationUnit = computed(() => (unitSystem.value === 'metric' ? 'mm' : 'inches'));
 
@@ -62,8 +62,7 @@ export const useWeatherStore = defineStore('weather', () => {
 
         if (code === 45 || code === 48) return 'fog';
 
-        if ([51, 53, 55, 56, 57].includes(code)) return 'drizzle';
-        if ([61, 63, 65, 66, 67].includes(code)) return 'rain';
+        if ([51, 53, 55, 56, 57, 61, 63, 65, 66, 67].includes(code)) return 'rain';
 
         if ([80, 81, 82].includes(code)) return 'rain_heavy';
 

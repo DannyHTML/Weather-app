@@ -7,18 +7,20 @@
             </div>
         </template>
 
-        <template v-if="currentWeatherAmount">
-            <div class="flex items-center justify-between">
-                <span>{{ currentWeatherAmount }} {{ weatherUnit }}</span>
-            </div>
-        </template>
-        <template v-else>
-            <div class="flex w-full items-center justify-between">
-                <span class="block">{{ tempMin }} {{ weatherUnit }}</span>
-                <span class="block">{{ tempMax }} {{ weatherUnit }}</span>
-            </div>
-        </template>
-        <!-- <span> weather info </span> -->
+        <div :class="fontSize">
+            <template v-if="currentWeatherAmount">
+                <div class="flex items-center justify-between">
+                    <span>{{ currentWeatherAmount }} {{ weatherUnit }}</span>
+                </div>
+            </template>
+            <template v-else>
+                <div class="flex w-full items-center justify-between">
+                    <span class="block">{{ tempMin }} {{ weatherUnit }}</span>
+                    <span class="block">{{ tempMax }} {{ weatherUnit }}</span>
+                </div>
+            </template>
+            <!-- <span> weather info </span> -->
+        </div>
     </div>
 </template>
 
@@ -50,6 +52,11 @@ defineProps({
     tempMin: {
         type: Number,
         required: false,
+    },
+    fontSize: {
+        type: String,
+        required: false,
+        default: 'text-base',
     },
 });
 </script>
