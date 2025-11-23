@@ -96,10 +96,20 @@ export const useWeatherStore = defineStore('weather', () => {
     // WEEKLY FORECAST  (THIS WAS BROKEN BEFORE)
     // --------------------------------------------------
 
-    const weeklyForecast = computed(() => {
+    interface WeeklyForecastDay {
+        date: string;
+        weekday: string;
+        tempMax: number;
+        tempMin: number;
+        icon: string;
+        weatherCode: number;
+    }
+
+    const weeklyForecast = computed<WeeklyForecastDay[]>(() => {
         if (!weatherData.value?.daily) return [];
 
         const daily = weatherData.value.daily;
+        const tz = weatherData.value.timezone;
 
         return daily.time.map((date: string, index: number) => {
             const weatherCode = daily.weather_code[index];
@@ -107,13 +117,20 @@ export const useWeatherStore = defineStore('weather', () => {
 
             return {
                 date,
-                weekday: new Date(date).toLocaleDateString('en-US', { weekday: 'short' }),
+                weekday: new Date(date).toLocaleDateString('en-GB', {
+                    weekday: 'short',
+                    timeZone: tz,
+                }),
                 tempMax: daily.temperature_2m_max[index],
                 tempMin: daily.temperature_2m_min[index],
                 icon: `/src/assets/images/${iconName}.webp`,
                 weatherCode,
             };
         });
+    });
+
+    const hourlyForecastWeekDays = computed(() => {
+        return weeklyForecast.value.map((day) => day.weekday);
     });
 
     // --------------------------------------------------
@@ -235,6 +252,7 @@ export const useWeatherStore = defineStore('weather', () => {
         todayForecast,
         todayWeekday,
         todayIcon,
+        hourlyForecastWeekDays,
 
         weeklyForecast,
     };

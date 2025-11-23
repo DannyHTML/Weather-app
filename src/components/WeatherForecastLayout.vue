@@ -52,6 +52,14 @@
         </div>
 
         <!-- Hourly forecast section -->
+        <div class="my-5 flex items-center justify-between rounded-lg bg-neutral-800 p-2">
+            <h2 class="text-xl font-medium text-neutral-200">Hourly forecast</h2>
+            <HourlyForecastDropDown :options="weatherStore.hourlyForecastWeekDays" />
+
+            <div>
+                <!-- TODO: Make new component for hourly forecast details -->
+            </div>
+        </div>
     </div>
 </template>
 
@@ -61,6 +69,7 @@ import MainWeatherForecast from './MainWeatherForecast.vue';
 import { useWeatherStore } from '../stores/weather-store';
 import { useFormattedDate } from '../composables/useFormattedDate';
 import CardComponent from './CardComponent.vue';
+import HourlyForecastDropDown from './HourlyForecastDropDown.vue';
 
 const weatherStore = useWeatherStore();
 const { formatDate } = useFormattedDate();
@@ -68,6 +77,4 @@ const { formatDate } = useFormattedDate();
 const formattedDate = computed(() => {
     return formatDate(weatherStore.timezone);
 });
-
-console.log(weatherStore.weeklyForecast);
 </script>
