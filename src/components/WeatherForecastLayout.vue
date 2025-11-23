@@ -50,6 +50,8 @@
                 :fontSize="'text-sm sm:text-base'"
             />
         </div>
+
+        <!-- Hourly forecast section -->
     </div>
 </template>
 
