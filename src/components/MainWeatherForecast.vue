@@ -21,14 +21,9 @@
                     </h2>
                     <span>{{ todayDate }}</span>
                     <div class="flex items-center justify-center gap-3">
-                        <img
-                            src="/src/assets/images/icon-sunny.webp"
-                            alt="icon sunny"
-                            class="w-24"
-                        />
+                        <img :src="weatherStore.todayIcon" alt="icon weather today" class="w-24" />
                         <span class="block text-5xl font-bold"
                             >{{ todayTemperature }} {{ temperatureUnit }}
-                            {{ weatherStore.currentWeatherUnitFahrenheit }}
                         </span>
                     </div>
                 </div>
