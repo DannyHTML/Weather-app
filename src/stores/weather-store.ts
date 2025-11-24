@@ -22,6 +22,7 @@ export const useWeatherStore = defineStore('weather', () => {
     const ISOCode = ref<string>('');
 
     const todayForecast = ref<any | null>(null);
+    const selectedHourlyForecastDay = ref<string>('');
 
     // --------------------------------------------------
     // Units
@@ -98,7 +99,8 @@ export const useWeatherStore = defineStore('weather', () => {
 
     interface WeeklyForecastDay {
         date: string;
-        weekday: string;
+        weekdayShort: string;
+        weekdayLong: string;
         tempMax: number;
         tempMin: number;
         icon: string;
@@ -117,8 +119,12 @@ export const useWeatherStore = defineStore('weather', () => {
 
             return {
                 date,
-                weekday: new Date(date).toLocaleDateString('en-GB', {
+                weekdayShort: new Date(date).toLocaleDateString('en-GB', {
                     weekday: 'short',
+                    timeZone: tz,
+                }),
+                weekdayLong: new Date(date).toLocaleDateString('en-GB', {
+                    weekday: 'long',
                     timeZone: tz,
                 }),
                 tempMax: daily.temperature_2m_max[index],
@@ -130,7 +136,49 @@ export const useWeatherStore = defineStore('weather', () => {
     });
 
     const hourlyForecastWeekDays = computed(() => {
-        return weeklyForecast.value.map((day) => day.weekday);
+        return weeklyForecast.value.map((day) => day.weekdayLong);
+    });
+
+    const next8HoursForecast = computed(() => {
+        if (!weatherData.value?.hourly || !weatherData.value.current_weather) return [];
+
+        const hourly = weatherData.value.hourly;
+        const times = hourly.time.map((t: string) => new Date(t));
+        const now = new Date(weatherData.value.current_weather.time);
+
+        // Find the index of the next hour from now
+        let startIndex = times.findIndex((t) => t.getTime() >= now.getTime());
+        if (startIndex === -1) startIndex = 0;
+
+        // Filter indexes for selected day if needed
+        const filteredIndexes = [];
+        for (let i = startIndex; i < times.length; i++) {
+            const t = times[i];
+            const weekday = t.toLocaleDateString('en-US', { weekday: 'long' });
+
+            if (!selectedHourlyForecastDay.value || weekday === selectedHourlyForecastDay.value) {
+                filteredIndexes.push(i);
+            }
+
+            if (filteredIndexes.length >= 8) break; // only next 8 hours
+        }
+
+        return filteredIndexes.map((idx) => {
+            const time = times[idx];
+            const weatherCode = hourly.weather_code?.[idx] ?? 0;
+            const iconName = mapWeatherCodeToIcon(weatherCode);
+
+            return {
+                time,
+                temperature: hourly.temperature_2m[idx],
+                apparentTemperature: hourly.apparent_temperature[idx],
+                humidity: hourly.relative_humidity_2m[idx],
+                precipitation: hourly.precipitation[idx],
+                windspeed: hourly.windspeed_10m[idx],
+                weekday: time.toLocaleDateString('en-US', { weekday: 'long' }),
+                icon: `/src/assets/images/${iconName}.webp`,
+            };
+        });
     });
 
     // --------------------------------------------------
@@ -255,5 +303,7 @@ export const useWeatherStore = defineStore('weather', () => {
         hourlyForecastWeekDays,
 
         weeklyForecast,
+        selectedHourlyForecastDay,
+        next8HoursForecast,
     };
 });

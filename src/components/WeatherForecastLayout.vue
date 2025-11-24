@@ -42,7 +42,7 @@
             <CardComponent
                 v-for="(day, index) in weatherStore.weeklyForecast"
                 :key="index"
-                :title="day.weekday"
+                :title="day.weekdayShort"
                 :image="day.icon"
                 :tempMin="day.tempMin"
                 :tempMax="day.tempMax"
@@ -52,12 +52,22 @@
         </div>
 
         <!-- Hourly forecast section -->
-        <div class="my-5 flex items-center justify-between rounded-lg bg-neutral-800 p-2">
-            <h2 class="text-xl font-medium text-neutral-200">Hourly forecast</h2>
-            <HourlyForecastDropDown :options="weatherStore.hourlyForecastWeekDays" />
+        <div class="my-8 rounded-lg bg-neutral-800 p-3">
+            <div class="flex items-center justify-between">
+                <h2 class="text-xl font-medium text-neutral-200">Hourly forecast</h2>
+                <HourlyForecastDropDown :options="weatherStore.hourlyForecastWeekDays" />
+            </div>
 
-            <div>
+            <div class="mt-4">
                 <!-- TODO: Make new component for hourly forecast details -->
+                <HourlyForecastCard
+                    v-for="item in next8HoursForecast"
+                    :key="item.date"
+                    :time="item.time"
+                    :temperature="item.temperature"
+                    :image="item.icon"
+                    :weatherUnit="weatherStore.tempUnit"
+                />
             </div>
         </div>
     </div>
@@ -70,9 +80,12 @@ import { useWeatherStore } from '../stores/weather-store';
 import { useFormattedDate } from '../composables/useFormattedDate';
 import CardComponent from './CardComponent.vue';
 import HourlyForecastDropDown from './HourlyForecastDropDown.vue';
+import HourlyForecastCard from './HourlyForecastCard.vue';
 
 const weatherStore = useWeatherStore();
 const { formatDate } = useFormattedDate();
+
+const next8HoursForecast = computed(() => weatherStore.next8HoursForecast);
 
 const formattedDate = computed(() => {
     return formatDate(weatherStore.timezone);
