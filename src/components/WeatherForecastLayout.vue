@@ -62,7 +62,6 @@
                 <!-- TODO: Make new component for hourly forecast details -->
                 <HourlyForecastCard
                     v-for="item in next8HoursForecast"
-                    :key="item.date"
                     :time="item.time"
                     :temperature="item.temperature"
                     :image="item.icon"

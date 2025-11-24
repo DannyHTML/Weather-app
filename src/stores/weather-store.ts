@@ -170,7 +170,7 @@ export const useWeatherStore = defineStore('weather', () => {
             const iconName = mapWeatherCodeToIcon(weatherCode);
 
             return {
-                time,
+                time: time.toISOString(),
                 temperature: hourly.temperature_2m[idx],
                 apparentTemperature: hourly.apparent_temperature[idx],
                 humidity: hourly.relative_humidity_2m[idx],
