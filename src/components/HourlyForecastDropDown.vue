@@ -30,10 +30,11 @@
                 @mouseleave="handleMouseLeave"
             >
                 <!-- Dropdown content to be added here -->
-                <div class="rounded-md bg-neutral-700 px-3 py-2">
+                <div class="rounded-md border border-neutral-600 bg-neutral-800 px-1.5 text-center">
                     <DropDownSelect
                         :options="weatherStore.hourlyForecastWeekDays"
                         v-model:selectedOption="weatherStore.selectedHourlyForecastDay"
+                        :style="'pb-2.5'"
                     />
                 </div>
             </div>
@@ -52,9 +53,13 @@ const weatherStore = useWeatherStore();
 // Holds the currently selected day, initialized to todayWeekday
 const currentSelectedDay = ref('');
 
-const props = defineProps<{
-    options: string[];
-}>();
+defineProps({
+    options: {
+        type: Array as () => string[],
+        required: false,
+        default: () => [],
+    },
+});
 
 const emit = defineEmits<{
     (e: 'update:selected', value: string): void;

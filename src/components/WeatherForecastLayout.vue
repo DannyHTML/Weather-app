@@ -1,72 +1,75 @@
 <template>
-    <div class="my-6 text-white">
-        <!-- Layout for the weather forecast -->
-        <MainWeatherForecast
-            :location="weatherStore.getCity"
-            :country="weatherStore.getCountry"
-            :todayDate="formattedDate"
-            :todayTemperature="weatherStore.temperatureDisplay"
-            :temperatureUnit="weatherStore.tempUnit"
-        />
-
-        <div class="my-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
-            <CardComponent
-                :title="'Feels like'"
-                :currentWeatherAmount="weatherStore.apparentTemperatureDisplay"
-                :weatherUnit="weatherStore.tempUnit"
-            />
-
-            <CardComponent
-                :title="'Humidity'"
-                :currentWeatherAmount="weatherStore.humidity"
-                :weatherUnit="'%'"
-            />
-
-            <CardComponent
-                :title="'Wind'"
-                :currentWeatherAmount="weatherStore.windSpeedDisplay"
-                :weatherUnit="weatherStore.windUnit"
-            />
-
-            <CardComponent
-                :title="'Precipitation'"
-                :currentWeatherAmount="weatherStore.precipitationDisplay"
-                :weatherUnit="weatherStore.precipitationUnit"
-            />
-        </div>
-
-        <h2 class="mb-4 text-xl font-bold text-neutral-200">Daily forecast</h2>
-
-        <!-- Daily forecast section -->
-        <div class="mt-2 grid grid-cols-3 gap-3 sm:grid-cols-7">
-            <CardComponent
-                v-for="(day, index) in weatherStore.weeklyForecast"
-                :key="index"
-                :title="day.weekdayShort"
-                :image="day.icon"
-                :tempMin="day.tempMin"
-                :tempMax="day.tempMax"
-                :weatherUnit="weatherStore.tempUnit"
-                :fontSize="'text-sm sm:text-base'"
-            />
-        </div>
-
+    <div class="my-6 grid-cols-12 gap-5 text-white lg:grid">
         <!-- Hourly forecast section -->
-        <div class="my-8 rounded-lg bg-neutral-800 p-3">
-            <div class="flex items-center justify-between">
-                <h2 class="text-xl font-medium text-neutral-200">Hourly forecast</h2>
-                <HourlyForecastDropDown :options="weatherStore.hourlyForecastWeekDays" />
-            </div>
+        <div class="col-span-8">
+            <!-- Layout for the weather forecast -->
+            <MainWeatherForecast
+                :location="weatherStore.getCity"
+                :country="weatherStore.getCountry"
+                :todayDate="formattedDate"
+                :todayTemperature="weatherStore.temperatureDisplay"
+                :temperatureUnit="weatherStore.tempUnit"
+            />
 
-            <div class="mt-4">
-                <!-- TODO: Make new component for hourly forecast details -->
-                <HourlyForecastCard
-                    v-for="item in next8HoursForecast"
-                    :time="item.time"
-                    :temperature="item.temperature"
-                    :image="item.icon"
+            <div class="my-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
+                <CardComponent
+                    :title="'Feels like'"
+                    :currentWeatherAmount="weatherStore.apparentTemperatureDisplay"
                     :weatherUnit="weatherStore.tempUnit"
                 />
+
+                <CardComponent
+                    :title="'Humidity'"
+                    :currentWeatherAmount="weatherStore.humidity"
+                    :weatherUnit="'%'"
+                />
+
+                <CardComponent
+                    :title="'Wind'"
+                    :currentWeatherAmount="weatherStore.windSpeedDisplay"
+                    :weatherUnit="weatherStore.windUnit"
+                />
+
+                <CardComponent
+                    :title="'Precipitation'"
+                    :currentWeatherAmount="weatherStore.precipitationDisplay"
+                    :weatherUnit="weatherStore.precipitationUnit"
+                />
+            </div>
+
+            <h2 class="mb-4 text-xl font-bold text-neutral-200">Daily forecast</h2>
+
+            <!-- Daily forecast section -->
+            <div class="mt-2 grid grid-cols-3 gap-3 sm:grid-cols-7">
+                <CardComponent
+                    v-for="(day, index) in weatherStore.weeklyForecast"
+                    :key="index"
+                    :title="day.weekdayShort"
+                    :image="day.icon"
+                    :tempMin="day.tempMin"
+                    :tempMax="day.tempMax"
+                    :weatherUnit="weatherStore.tempUnit"
+                    :fontSize="'text-sm sm:text-base'"
+                />
+            </div>
+        </div>
+
+        <div class="col-span-4">
+            <div class="my-8 rounded-lg bg-neutral-800 p-3 lg:my-0">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-xl font-medium text-neutral-200">Hourly forecast</h2>
+                    <HourlyForecastDropDown :options="weatherStore.hourlyForecastWeekDays" />
+                </div>
+
+                <div class="mt-4">
+                    <HourlyForecastCard
+                        v-for="item in next8HoursForecast"
+                        :time="item.time"
+                        :temperature="item.temperature"
+                        :image="item.icon"
+                        :weatherUnit="weatherStore.tempUnit"
+                    />
+                </div>
             </div>
         </div>
     </div>

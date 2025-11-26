@@ -24,9 +24,7 @@ export const useWeatherStore = defineStore('weather', () => {
     const todayForecast = ref<any | null>(null);
     const selectedHourlyForecastDay = ref<string>('');
 
-    // --------------------------------------------------
     // Units
-    // --------------------------------------------------
 
     const tempUnit = computed(() => (unitSystem.value === 'metric' ? '°' : '°F'));
     const windUnit = computed(() => (unitSystem.value === 'metric' ? 'km/h' : 'mph'));
@@ -50,9 +48,7 @@ export const useWeatherStore = defineStore('weather', () => {
         unitSystem.value === 'metric' ? precipitation.value : precipitation.value / 25.4
     );
 
-    // --------------------------------------------------
     // WEATHER CODE → ICON
-    // --------------------------------------------------
 
     function mapWeatherCodeToIcon(code: number): string {
         // TODO: I need to add more icons later, like rain and rain heavy for example
@@ -76,9 +72,7 @@ export const useWeatherStore = defineStore('weather', () => {
         return 'unknown';
     }
 
-    // --------------------------------------------------
     // TODAY INFO
-    // --------------------------------------------------
 
     const todayWeekday = computed(() => {
         if (!todayForecast.value) return '';
@@ -93,9 +87,7 @@ export const useWeatherStore = defineStore('weather', () => {
         return `/src/assets/images/${iconName}.webp`;
     });
 
-    // --------------------------------------------------
-    // WEEKLY FORECAST  (THIS WAS BROKEN BEFORE)
-    // --------------------------------------------------
+    // WEEKLY FORECAST
 
     interface WeeklyForecastDay {
         date: string;
@@ -148,7 +140,7 @@ export const useWeatherStore = defineStore('weather', () => {
         const now = new Date(weatherData.value.current_weather.time);
 
         // Find the index of the next hour from now
-        let startIndex = times.findIndex((t) => t.getTime() >= now.getTime());
+        let startIndex = times.findIndex((t: Date) => t.getTime() >= now.getTime());
         if (startIndex === -1) startIndex = 0;
 
         // Filter indexes for selected day if needed
@@ -182,9 +174,7 @@ export const useWeatherStore = defineStore('weather', () => {
         });
     });
 
-    // --------------------------------------------------
     // FETCH WEATHER
-    // --------------------------------------------------
 
     async function fetchWeather(city: string) {
         loading.value = true;
@@ -266,10 +256,6 @@ export const useWeatherStore = defineStore('weather', () => {
             loading.value = false;
         }
     }
-
-    // --------------------------------------------------
-    // EXPORT STORE
-    // --------------------------------------------------
 
     return {
         loading,

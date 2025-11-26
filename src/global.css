@@ -23,5 +23,9 @@
 @layer components {
     .container {
         @apply mx-auto px-4;
+
+        @media (width >= 1280px) {
+            max-width: 78rem !important;
+        }
     }
 }
