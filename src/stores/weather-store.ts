@@ -177,6 +177,11 @@ export const useWeatherStore = defineStore('weather', () => {
 
     // FETCH WEATHER
 
+    // TODO: Need to show proper error messages when city is not found or API fails. Also implement curerent location fetch.
+    // TODO: Need to make sure the amount of requests to the API is low.
+    // TODO: Consider caching results for previously searched cities to reduce API calls. HOW, GOOGLE?
+    // TODO: Implent template literal types for unitSystem to avoid invalid values, maybe?
+    // TODO: Implement correct UX design for loading and error states. Skeleton loading, error messages, etc.
     async function fetchWeather(city: string) {
         loading.value = true;
         error.value = null;
