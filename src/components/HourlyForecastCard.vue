@@ -8,7 +8,7 @@
                 new Date(time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
             }}</span>
         </div>
-        <span class="flex items-center">{{ temperature }} {{ weatherUnit }}</span>
+        <span class="flex items-center">{{ temperature.toFixed(1) }} {{ weatherUnit }}</span>
     </div>
 </template>
 

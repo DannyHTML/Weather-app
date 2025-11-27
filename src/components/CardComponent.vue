@@ -8,15 +8,15 @@
         </template>
 
         <div :class="fontSize">
-            <template v-if="currentWeatherAmount">
+            <template v-if="currentWeatherAmount !== null">
                 <div class="flex items-center justify-between">
-                    <span>{{ currentWeatherAmount }} {{ weatherUnit }}</span>
+                    <span>{{ currentWeatherAmount.toFixed(1) }} {{ weatherUnit }}</span>
                 </div>
             </template>
             <template v-else>
                 <div class="flex w-full items-center justify-between">
-                    <span class="block">{{ tempMin }} {{ weatherUnit }}</span>
-                    <span class="block">{{ tempMax }} {{ weatherUnit }}</span>
+                    <span class="block">{{ tempMin?.toFixed(1) }} {{ weatherUnit }}</span>
+                    <span class="block">{{ tempMax?.toFixed(1) }} {{ weatherUnit }}</span>
                 </div>
             </template>
             <!-- <span> weather info </span> -->

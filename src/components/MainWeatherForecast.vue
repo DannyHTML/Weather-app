@@ -23,7 +23,7 @@
                     <div class="flex items-center justify-center gap-3">
                         <img :src="weatherStore.todayIcon" alt="icon weather today" class="w-24" />
                         <span class="block text-5xl font-bold"
-                            >{{ todayTemperature }} {{ temperatureUnit }}
+                            >{{ todayTemperature.toFixed(1) }} {{ temperatureUnit }}
                         </span>
                     </div>
                 </div>

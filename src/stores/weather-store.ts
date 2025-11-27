@@ -134,6 +134,7 @@ export const useWeatherStore = defineStore('weather', () => {
     // TODO: Fix hourly forecast to show next 8 hours from current time. It starts showing from 00:00 instead of the current time.
     const next8HoursForecast = computed(() => {
         if (!weatherData.value?.hourly || !weatherData.value.current_weather) return [];
+        console.log(weatherData.value);
 
         const hourly = weatherData.value.hourly;
         const times = hourly.time.map((t: string) => new Date(t));
@@ -202,9 +203,7 @@ export const useWeatherStore = defineStore('weather', () => {
                 },
             });
 
-            // Store full data
             weatherData.value = response.data;
-            console.log(weeklyForecast.value);
 
             const data = response.data;
 

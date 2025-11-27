@@ -1,4 +1,5 @@
 <template>
+    <!-- TODO: I don't think this component is necessary, double check! -->
     <CardComponent
         :title="title"
         :currentWeatherAmount="currentWeatherAmount"

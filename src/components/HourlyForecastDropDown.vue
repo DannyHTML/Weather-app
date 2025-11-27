@@ -31,6 +31,7 @@
             >
                 <!-- Dropdown content to be added here -->
                 <div class="rounded-md border border-neutral-600 bg-neutral-800 px-1.5 text-center">
+                    <!-- TODO: Make sure TAB also works for accessibility -->
                     <DropDownSelect
                         :options="weatherStore.hourlyForecastWeekDays"
                         v-model:selectedOption="weatherStore.selectedHourlyForecastDay"
