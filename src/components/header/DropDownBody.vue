@@ -6,6 +6,7 @@
             @click="toggleDropdown"
             @mouseover="handleMouseOver"
             @focusin="isOpen = true"
+            :disabled="weatherStore.error"
             class="flex w-fit cursor-pointer items-center justify-between gap-2 rounded-md bg-neutral-600 px-2 py-1"
         >
             <img src="/src/assets/images/icon-units.svg" alt="icon-units" />

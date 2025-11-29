@@ -16,7 +16,8 @@ export const useWeatherStore = defineStore('weather', () => {
 
     const unitSystem = ref<'metric' | 'imperial'>('metric');
     const loading = ref<boolean>(false);
-    const error = ref<string | null>(null);
+    const errorInput = ref<boolean>(false);
+    const error = ref<boolean>(false);
 
     const timezone = ref<string>('');
     const ISOCode = ref<string>('');
@@ -184,7 +185,7 @@ export const useWeatherStore = defineStore('weather', () => {
     // TODO: Implement correct UX design for loading and error states. Skeleton loading, error messages, etc.
     async function fetchWeather(city: string) {
         loading.value = true;
-        error.value = null;
+        errorInput.value = false;
 
         try {
             const geoRes = await axios.get('https://geocoding-api.open-meteo.com/v1/search', {
@@ -192,7 +193,9 @@ export const useWeatherStore = defineStore('weather', () => {
             });
 
             if (!geoRes.data.results?.length) {
-                throw new Error(`City "${city}" not found`);
+                errorInput.value = true;
+                console.log('City not found');
+                return;
             }
 
             const { latitude, longitude, country } = geoRes.data.results[0];
@@ -255,7 +258,7 @@ export const useWeatherStore = defineStore('weather', () => {
                 currentIndex !== -1 ? data.hourly.windspeed_10m[currentIndex] : windSpeed.value;
         } catch (err: any) {
             console.error(err);
-            error.value = err.message;
+            error.value = true;
         } finally {
             loading.value = false;
         }
@@ -264,6 +267,7 @@ export const useWeatherStore = defineStore('weather', () => {
     return {
         loading,
         error,
+        errorInput,
 
         fetchWeather,
 
