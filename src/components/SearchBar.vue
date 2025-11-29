@@ -12,8 +12,18 @@
                         placeholder="Search for a place..."
                         @keyup.enter="(weatherStore.fetchWeather(inputCity), (inputCity = ''))"
                         v-model="inputCity"
+                        list="cities"
                         class="w-full rounded-md bg-neutral-700 py-2.5 pr-5 pl-10 placeholder:text-neutral-200 focus:outline-none"
                     />
+                    <!-- TODO: Is this the best option? If so, make it dynamic -->
+                    <!-- TODO: Safe city search input and show suggestions IF possible -->
+                    <datalist id="cities">
+                        <option value="New York" />
+                        <option value="London" />
+                        <option value="Tokyo" />
+                        <option value="Paris" />
+                        <option value="Sydney" />
+                    </datalist>
                     <img
                         src="/src/assets/images/icon-search.svg"
                         alt="search-icon"

@@ -5,6 +5,7 @@
             ref="toggleButtonRef"
             @click="toggleDropdown"
             @mouseover="handleMouseOver"
+            @focusin="isOpen = true"
             class="flex w-fit cursor-pointer items-center justify-between gap-2 rounded-md bg-neutral-600 px-2 py-1"
         >
             <img src="/src/assets/images/icon-units.svg" alt="icon-units" />
@@ -29,6 +30,8 @@
                 ref="dropdownRef"
                 class="absolute right-0 z-50 mt-2 w-56"
                 @mouseleave="handleMouseLeave"
+                @focusout="handleFocusOut"
+                tabindex="-1"
             >
                 <!-- Dropdown content to be added here -->
                 <div class="rounded-md bg-neutral-700 px-3 py-2">
@@ -109,13 +112,34 @@ const toggleButtonRef = useTemplateRef<HTMLElement>('toggleButtonRef');
 
 onClickOutside(
     dropdownRef,
-    () => {
+    (event) => {
+        const nextFocusedEl = event.relatedTarget as HTMLElement | null;
+
+        if (
+            nextFocusedEl &&
+            (dropdownRef.value?.contains(nextFocusedEl) ||
+                toggleButtonRef.value?.contains(nextFocusedEl))
+        ) {
+            return;
+        }
         isOpen.value = false;
     },
     {
         ignore: [toggleButtonRef],
     }
 );
+
+const handleFocusOut = (event: FocusEvent) => {
+    const next = event.relatedTarget as HTMLElement | null;
+
+    // If focus remains inside dropdown or button → keep open
+    if (next && (dropdownRef.value?.contains(next) || toggleButtonRef.value?.contains(next))) {
+        return;
+    }
+
+    // Otherwise close
+    isOpen.value = false;
+};
 
 const isImperial = computed(() => {
     return (

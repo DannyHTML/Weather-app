@@ -5,6 +5,7 @@
             ref="toggleButtonRef"
             @click="toggleDropdown"
             @mouseover="handleMouseOver"
+            @focusin="isOpen = true"
             class="flex w-fit cursor-pointer items-center justify-between gap-2 rounded-md bg-neutral-600 px-2 py-1"
         >
             <span class="block">{{ currentSelectedDay }}</span>
@@ -36,6 +37,8 @@
                         :options="weatherStore.hourlyForecastWeekDays"
                         v-model:selectedOption="weatherStore.selectedHourlyForecastDay"
                         :style="'pb-2.5'"
+                        tabindex="-1"
+                        @focusout="onFocusOut"
                     />
                 </div>
             </div>
@@ -99,6 +102,19 @@ onClickOutside(
         ignore: [toggleButtonRef],
     }
 );
+
+const onFocusOut = (event: FocusEvent) => {
+    const nextFocusedEl = event.relatedTarget as HTMLElement | null;
+
+    if (
+        nextFocusedEl &&
+        (dropdownRef.value?.contains(nextFocusedEl) ||
+            toggleButtonRef.value?.contains(nextFocusedEl))
+    ) {
+        return;
+    }
+    isOpen.value = false;
+};
 
 onMounted(() => {
     // Modern, type-safe hover detection
