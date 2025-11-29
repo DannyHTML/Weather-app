@@ -183,6 +183,9 @@ export const useWeatherStore = defineStore('weather', () => {
     // TODO: Consider caching results for previously searched cities to reduce API calls. HOW, GOOGLE?
     // TODO: Implent template literal types for unitSystem to avoid invalid values, maybe?
     // TODO: Implement correct UX design for loading and error states. Skeleton loading, error messages, etc.
+    // TODO: Fix fetchWeather to avoid multiple requests when searching for the same city repeatedly.
+
+    // TODO: Need to click twice on mobile to open the dropdown. Issue with touch events?. Needs fixing.
     async function fetchWeather(city: string) {
         loading.value = true;
         errorInput.value = false;
