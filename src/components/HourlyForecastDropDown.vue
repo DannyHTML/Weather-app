@@ -5,10 +5,11 @@
             ref="toggleButtonRef"
             @click="toggleDropdown"
             @mouseover="handleMouseOver"
+            :disabled="!weatherStore.getCity"
             @focusin="isOpen = true"
             class="flex w-fit cursor-pointer items-center justify-between gap-2 rounded-md bg-neutral-600 px-2 py-1"
         >
-            <span class="block">{{ currentSelectedDay }}</span>
+            <span class="block">{{ currentDay }}</span>
             <img
                 src="/src/assets/images/icon-dropdown.svg"
                 alt="icon-dropdown"
@@ -47,15 +48,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch, useTemplateRef } from 'vue';
+import { ref, onMounted, watch, useTemplateRef, computed, onBeforeMount } from 'vue';
 import { onClickOutside } from '@vueuse/core';
 import DropDownSelect from './DropDownSelect.vue';
 import { useWeatherStore } from '../stores/weather-store';
 
 const weatherStore = useWeatherStore();
 
-// Holds the currently selected day, initialized to todayWeekday
 const currentSelectedDay = ref('');
+let placeholderCurrentDay = ref('');
 
 defineProps({
     options: {
@@ -73,14 +74,15 @@ const isOpen = ref(false);
 const supportHover = ref(false);
 
 const toggleDropdown = () => {
-    if (!supportHover.value) {
+    if (!supportHover.value && !weatherStore.getCity) {
         isOpen.value = !isOpen.value;
     }
 };
 
 const handleMouseOver = () => {
-    if (supportHover.value) {
+    if (supportHover.value && weatherStore.getCity) {
         isOpen.value = true;
+        console.log('hovered');
     }
 };
 
@@ -115,6 +117,19 @@ const onFocusOut = (event: FocusEvent) => {
     }
     isOpen.value = false;
 };
+
+const currentDay = computed(() => {
+    if (currentSelectedDay.value) {
+        return currentSelectedDay.value;
+    }
+    return placeholderCurrentDay;
+});
+
+onBeforeMount(() => {
+    placeholderCurrentDay.value = new Date().toLocaleDateString(navigator.language, {
+        weekday: 'long',
+    });
+});
 
 onMounted(() => {
     // Modern, type-safe hover detection
