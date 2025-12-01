@@ -9,7 +9,9 @@
         </template>
         <!-- TODO: It works but when you select a city for the first time it looks glitchy, fix this! -->
         <template v-if="!weatherStore.getCity">
-            <div class="relative h-[286px] w-full overflow-hidden rounded-2xl bg-neutral-800">
+            <div
+                class="relative h-[286px] w-[343px] overflow-hidden rounded-2xl bg-neutral-800 md:h-[263px] md:w-[736px]"
+            >
                 <!-- Content placeholders -->
                 <div
                     class="absolute top-1/2 left-1/2 flex w-full -translate-x-1/2 -translate-y-1/2 animate-pulse flex-col items-center gap-3 text-center"
@@ -27,7 +29,7 @@
             </div>
         </template>
         <template v-else>
-            <div class="relative">
+            <div class="relative h-[286px] w-[343px] md:h-[263px] md:w-[736px]">
                 <picture>
                     <source :srcset="desktopImage" media="(min-width: 768px)" />
                     <img :src="mobileImage" alt="background-today" class="w-full" />

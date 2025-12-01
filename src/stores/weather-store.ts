@@ -267,12 +267,90 @@ export const useWeatherStore = defineStore('weather', () => {
         }
     }
 
+    // Fetch weather by coordinates (for current location)
+    async function fetchWeatherByCoords(lat: number, lon: number) {
+        loading.value = true;
+        error.value = false;
+
+        try {
+            const response = await axios.get('https://api.open-meteo.com/v1/forecast', {
+                params: {
+                    latitude: lat,
+                    longitude: lon,
+                    current_weather: true,
+                    hourly: 'temperature_2m,relative_humidity_2m,precipitation,apparent_temperature,windspeed_10m',
+                    daily: 'weather_code,temperature_2m_max,temperature_2m_min,apparent_temperature_max,apparent_temperature_min,precipitation_sum,windspeed_10m_max',
+                    timezone: 'auto',
+                },
+            });
+
+            weatherData.value = response.data;
+            const data = response.data;
+
+            // Set city + country (reverse geocode)
+            const reverse = await axios.get(`https://nominatim.openstreetmap.org/reverse`, {
+                params: { lat, lon, format: 'json' },
+            });
+
+            getCity.value =
+                reverse.data.address.city ||
+                reverse.data.address.town ||
+                reverse.data.address.village ||
+                '';
+            getCountry.value = reverse.data.address.country || '';
+
+            timezone.value = data.current_weather.time;
+            ISOCode.value = data.current_weather_units.time;
+
+            // Same parsing logic as your fetchWeather()
+            weatherTemp.value = data.current_weather.temperature;
+            windSpeed.value = data.current_weather.windspeed;
+
+            const currentTime = new Date(data.current_weather.time);
+            const hourlyTimes = data.hourly.time.map((t: string) => new Date(t));
+
+            const currentIndex = hourlyTimes.findIndex(
+                (t: Date) =>
+                    t.getUTCFullYear() === currentTime.getUTCFullYear() &&
+                    t.getUTCMonth() === currentTime.getUTCMonth() &&
+                    t.getUTCDate() === currentTime.getUTCDate() &&
+                    t.getUTCHours() === currentTime.getUTCHours()
+            );
+
+            todayForecast.value = {
+                date: data.daily.time[0],
+                tempMax: data.daily.temperature_2m_max[0],
+                tempMin: data.daily.temperature_2m_min[0],
+                apparentMax: data.daily.apparent_temperature_max[0],
+                apparentMin: data.daily.apparent_temperature_min[0],
+                weatherCode: data.daily.weather_code[0],
+            };
+
+            apparentTemperature.value =
+                currentIndex !== -1 ? data.hourly.apparent_temperature[currentIndex] : 0;
+
+            humidity.value =
+                currentIndex !== -1 ? data.hourly.relative_humidity_2m[currentIndex] : 0;
+
+            precipitation.value = currentIndex !== -1 ? data.hourly.precipitation[currentIndex] : 0;
+
+            windSpeed.value =
+                currentIndex !== -1 ? data.hourly.windspeed_10m[currentIndex] : windSpeed.value;
+        } catch (err) {
+            console.error(err);
+            error.value = true;
+        } finally {
+            loading.value = false;
+        }
+    }
+
     return {
         loading,
         error,
         errorInput,
 
         fetchWeather,
+        fetchWeatherByCoords,
 
         getCity,
         getCountry,

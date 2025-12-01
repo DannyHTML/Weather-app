@@ -10,20 +10,20 @@
                         type="text"
                         name="getCity"
                         placeholder="Search for a place..."
-                        @keyup.enter="(weatherStore.fetchWeather(inputCity), (inputCity = ''))"
+                        @keyup.enter="searchWeather"
                         v-model="inputCity"
                         list="cities"
                         class="w-full rounded-md bg-neutral-700 py-2.5 pr-5 pl-10 placeholder:text-neutral-200 focus:outline-none"
                     />
                     <!-- TODO: Is this the best option? If so, make it dynamic -->
                     <!-- TODO: Safe city search input and show suggestions IF possible -->
-                    <datalist id="cities">
+                    <!-- <datalist id="cities">
                         <option value="New York" />
                         <option value="London" />
                         <option value="Tokyo" />
                         <option value="Paris" />
                         <option value="Sydney" />
-                    </datalist>
+                    </datalist> -->
                     <img
                         src="/src/assets/images/icon-search.svg"
                         alt="search-icon"
@@ -36,7 +36,7 @@
             >
                 <button
                     type="button"
-                    @click="(weatherStore.fetchWeather(inputCity), (inputCity = ''))"
+                    @click="searchWeather"
                     class="flex w-full cursor-pointer justify-center rounded-md bg-blue-500 p-2.5"
                 >
                     <template v-if="weatherStore.loading">
@@ -54,10 +54,42 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useWeatherStore } from '../stores/weather-store';
 
-const inputCity = ref<string>('');
-
 const weatherStore = useWeatherStore();
+
+const inputCity = ref<string>('');
+const hasLoadedInitialWeather = ref(false);
+
+const options = {
+    enableHighAccuracy: false,
+    timeout: 5000,
+    maximumAge: 60000,
+};
+
+const searchWeather = () => {
+    if (!inputCity.value.trim()) return;
+
+    hasLoadedInitialWeather.value = false;
+    weatherStore.fetchWeather(inputCity.value);
+    inputCity.value = '';
+};
+
+onMounted(() => {
+    navigator.geolocation.getCurrentPosition(
+        (position) => {
+            hasLoadedInitialWeather.value = true;
+            weatherStore.fetchWeatherByCoords(position.coords.latitude, position.coords.longitude);
+        },
+        (error) => {
+            if (!hasLoadedInitialWeather.value) {
+                hasLoadedInitialWeather.value = true;
+                weatherStore.fetchWeather('London'); // fallback
+            }
+            console.error('Error obtaining location:', error.message);
+        },
+        options
+    );
+});
 </script>
