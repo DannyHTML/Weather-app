@@ -2,6 +2,15 @@ import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 import axios from 'axios';
 
+import fog from '@/assets/images/fog.webp';
+import overcast from '@/assets/images/overcast.webp';
+import partly_cloudy from '@/assets/images/partly_cloudy.webp';
+import rain_heavy from '@/assets/images/rain_heavy.webp';
+import rain from '@/assets/images/rain.webp';
+import snow from '@/assets/images/snow.webp';
+import sunny from '@/assets/images/sunny.webp';
+import thunder from '@/assets/images/thunder.webp';
+
 export const useWeatherStore = defineStore('weather', () => {
     const weatherData = ref<any | null>(null);
 
@@ -24,6 +33,18 @@ export const useWeatherStore = defineStore('weather', () => {
 
     const todayForecast = ref<any | null>(null);
     const selectedHourlyForecastDay = ref<string>('');
+
+    // Weather icons
+    const weatherIcons: Record<string, string> = {
+        fog,
+        overcast,
+        partly_cloudy,
+        rain_heavy,
+        rain,
+        snow,
+        sunny,
+        thunder,
+    };
 
     // Units
 
@@ -70,7 +91,7 @@ export const useWeatherStore = defineStore('weather', () => {
         if (code === 95) return 'storm';
         if (code === 96 || code === 99) return 'storm_hail';
 
-        return 'unknown';
+        return 'overcast';
     }
 
     // TODAY INFO
@@ -83,9 +104,9 @@ export const useWeatherStore = defineStore('weather', () => {
     });
 
     const todayIcon = computed(() => {
-        if (!todayForecast.value) return '/src/assets/images/unknown.webp';
+        if (!todayForecast.value) return weatherIcons.overcast;
         const iconName = mapWeatherCodeToIcon(todayForecast.value.weatherCode);
-        return `/src/assets/images/${iconName}.webp`;
+        return weatherIcons[iconName] || weatherIcons.overcast;
     });
 
     // WEEKLY FORECAST
@@ -122,7 +143,7 @@ export const useWeatherStore = defineStore('weather', () => {
                 }),
                 tempMax: daily.temperature_2m_max[index],
                 tempMin: daily.temperature_2m_min[index],
-                icon: `/src/assets/images/${iconName}.webp`,
+                icon: weatherIcons[iconName] || weatherIcons.overcast,
                 weatherCode,
             };
         });
@@ -171,7 +192,7 @@ export const useWeatherStore = defineStore('weather', () => {
                 precipitation: hourly.precipitation[idx],
                 windspeed: hourly.windspeed_10m[idx],
                 weekday: time.toLocaleDateString('en-US', { weekday: 'long' }),
-                icon: `/src/assets/images/${iconName}.webp`,
+                icon: weatherIcons[iconName] || weatherIcons.overcast,
             };
         });
     });

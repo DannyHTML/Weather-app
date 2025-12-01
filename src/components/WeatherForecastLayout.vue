@@ -66,7 +66,7 @@
                         v-for="item in next8HoursForecast"
                         :time="item.time"
                         :temperature="item.temperature"
-                        :image="item.icon"
+                        :image="item.icon || ''"
                         :weatherUnit="weatherStore.tempUnit"
                     />
                 </div>
