@@ -7,8 +7,29 @@
                 </span>
             </div>
         </template>
+        <!-- TODO: It works but when you select a city for the first time it looks glitchy, fix this! -->
+        <template v-if="!weatherStore.getCity">
+            <div
+                class="relative h-[286px] w-[343px] overflow-hidden rounded-2xl bg-neutral-800 md:h-[263px] md:w-[736px]"
+            >
+                <!-- Content placeholders -->
+                <div
+                    class="absolute top-1/2 left-1/2 flex w-full -translate-x-1/2 -translate-y-1/2 animate-pulse flex-col items-center gap-3 text-center"
+                >
+                    <!-- City + Country -->
+                    <div class="h-8 w-64 rounded bg-neutral-700"></div>
+                    <!-- Date -->
+                    <div class="h-6 w-32 rounded bg-neutral-700"></div>
+                    <div class="flex items-center justify-center gap-3">
+                        <!-- Temperature and Weather icon -->
+                        <div class="mt-2 h-24 w-24 rounded-full bg-neutral-700"></div>
+                        <div class="mt-1 h-12 w-32 rounded bg-neutral-700"></div>
+                    </div>
+                </div>
+            </div>
+        </template>
         <template v-else>
-            <div class="relative">
+            <div class="relative h-[286px] w-[343px] md:h-[263px] md:w-[736px]">
                 <picture>
                     <source :srcset="desktopImage" media="(min-width: 768px)" />
                     <img :src="mobileImage" alt="background-today" class="w-full" />
@@ -23,7 +44,7 @@
                     <div class="flex items-center justify-center gap-3">
                         <img :src="weatherStore.todayIcon" alt="icon weather today" class="w-24" />
                         <span class="block text-5xl font-bold"
-                            >{{ todayTemperature }} {{ temperatureUnit }}
+                            >{{ todayTemperature.toFixed(1) }} {{ temperatureUnit }}
                         </span>
                     </div>
                 </div>

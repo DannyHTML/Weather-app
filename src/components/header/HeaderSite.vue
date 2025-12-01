@@ -8,6 +8,6 @@ import DropDownBody from './DropDownBody.vue';
         <img src="/src/assets/images/logo.svg" alt="logo" class="h-7 lg:h-10" />
 
         <!-- Dropdown metrics -->
-        <DropDownBody> </DropDownBody>
+        <DropDownBody />
     </header>
 </template>

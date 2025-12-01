@@ -16,16 +16,16 @@ export const useWeatherStore = defineStore('weather', () => {
 
     const unitSystem = ref<'metric' | 'imperial'>('metric');
     const loading = ref<boolean>(false);
-    const error = ref<string | null>(null);
+    const errorInput = ref<boolean>(false);
+    const error = ref<boolean>(false);
 
     const timezone = ref<string>('');
     const ISOCode = ref<string>('');
 
     const todayForecast = ref<any | null>(null);
+    const selectedHourlyForecastDay = ref<string>('');
 
-    // --------------------------------------------------
     // Units
-    // --------------------------------------------------
 
     const tempUnit = computed(() => (unitSystem.value === 'metric' ? '°' : '°F'));
     const windUnit = computed(() => (unitSystem.value === 'metric' ? 'km/h' : 'mph'));
@@ -49,9 +49,7 @@ export const useWeatherStore = defineStore('weather', () => {
         unitSystem.value === 'metric' ? precipitation.value : precipitation.value / 25.4
     );
 
-    // --------------------------------------------------
     // WEATHER CODE → ICON
-    // --------------------------------------------------
 
     function mapWeatherCodeToIcon(code: number): string {
         // TODO: I need to add more icons later, like rain and rain heavy for example
@@ -75,9 +73,7 @@ export const useWeatherStore = defineStore('weather', () => {
         return 'unknown';
     }
 
-    // --------------------------------------------------
     // TODAY INFO
-    // --------------------------------------------------
 
     const todayWeekday = computed(() => {
         if (!todayForecast.value) return '';
@@ -92,14 +88,23 @@ export const useWeatherStore = defineStore('weather', () => {
         return `/src/assets/images/${iconName}.webp`;
     });
 
-    // --------------------------------------------------
-    // WEEKLY FORECAST  (THIS WAS BROKEN BEFORE)
-    // --------------------------------------------------
+    // WEEKLY FORECAST
 
-    const weeklyForecast = computed(() => {
+    interface WeeklyForecastDay {
+        date: string;
+        weekdayShort: string;
+        weekdayLong: string;
+        tempMax: number;
+        tempMin: number;
+        icon: string;
+        weatherCode: number;
+    }
+
+    const weeklyForecast = computed<WeeklyForecastDay[]>(() => {
         if (!weatherData.value?.daily) return [];
 
         const daily = weatherData.value.daily;
+        const tz = weatherData.value.timezone;
 
         return daily.time.map((date: string, index: number) => {
             const weatherCode = daily.weather_code[index];
@@ -107,7 +112,14 @@ export const useWeatherStore = defineStore('weather', () => {
 
             return {
                 date,
-                weekday: new Date(date).toLocaleDateString('en-US', { weekday: 'short' }),
+                weekdayShort: new Date(date).toLocaleDateString('en-GB', {
+                    weekday: 'short',
+                    timeZone: tz,
+                }),
+                weekdayLong: new Date(date).toLocaleDateString('en-GB', {
+                    weekday: 'long',
+                    timeZone: tz,
+                }),
                 tempMax: daily.temperature_2m_max[index],
                 tempMin: daily.temperature_2m_min[index],
                 icon: `/src/assets/images/${iconName}.webp`,
@@ -116,13 +128,66 @@ export const useWeatherStore = defineStore('weather', () => {
         });
     });
 
-    // --------------------------------------------------
-    // FETCH WEATHER
-    // --------------------------------------------------
+    const hourlyForecastWeekDays = computed(() => {
+        return weeklyForecast.value.map((day) => day.weekdayLong);
+    });
 
+    // TODO: Fix hourly forecast to show next 8 hours from current time. It starts showing from 00:00 instead of the current time.
+    const next8HoursForecast = computed(() => {
+        if (!weatherData.value?.hourly || !weatherData.value.current_weather) return [];
+        console.log(weatherData.value);
+
+        const hourly = weatherData.value.hourly;
+        const times = hourly.time.map((t: string) => new Date(t));
+        const now = new Date(weatherData.value.current_weather.time);
+
+        // Find the index of the next hour from now
+        let startIndex = times.findIndex((t: Date) => t.getTime() >= now.getTime());
+        if (startIndex === -1) startIndex = 0;
+
+        // Filter indexes for selected day if needed
+        const filteredIndexes = [];
+        for (let i = startIndex; i < times.length; i++) {
+            const t = times[i];
+            const weekday = t.toLocaleDateString('en-US', { weekday: 'long' });
+
+            if (!selectedHourlyForecastDay.value || weekday === selectedHourlyForecastDay.value) {
+                filteredIndexes.push(i);
+            }
+
+            if (filteredIndexes.length >= 8) break; // only next 8 hours
+        }
+
+        return filteredIndexes.map((idx) => {
+            const time = times[idx];
+            const weatherCode = hourly.weather_code?.[idx] ?? 0;
+            const iconName = mapWeatherCodeToIcon(weatherCode);
+
+            return {
+                time: time.toISOString(),
+                temperature: hourly.temperature_2m[idx],
+                apparentTemperature: hourly.apparent_temperature[idx],
+                humidity: hourly.relative_humidity_2m[idx],
+                precipitation: hourly.precipitation[idx],
+                windspeed: hourly.windspeed_10m[idx],
+                weekday: time.toLocaleDateString('en-US', { weekday: 'long' }),
+                icon: `/src/assets/images/${iconName}.webp`,
+            };
+        });
+    });
+
+    // FETCH WEATHER
+
+    // TODO: Need to make sure the amount of requests to the API is low.
+    // TODO: Consider caching results for previously searched cities to reduce API calls. HOW, GOOGLE?
+    // TODO: Implent template literal types for unitSystem to avoid invalid values, maybe?
+    // TODO: Fix fetchWeather to avoid multiple requests when searching for the same city repeatedly.
+
+    // TODO: Need to click twice on mobile to open the dropdown. Issue with touch events?. Needs fixing.
+    // TODO: Fix Units dropdown, units needs to work separately.
     async function fetchWeather(city: string) {
         loading.value = true;
-        error.value = null;
+        errorInput.value = false;
 
         try {
             const geoRes = await axios.get('https://geocoding-api.open-meteo.com/v1/search', {
@@ -130,7 +195,9 @@ export const useWeatherStore = defineStore('weather', () => {
             });
 
             if (!geoRes.data.results?.length) {
-                throw new Error(`City "${city}" not found`);
+                errorInput.value = true;
+                console.log('City not found');
+                return;
             }
 
             const { latitude, longitude, country } = geoRes.data.results[0];
@@ -146,9 +213,7 @@ export const useWeatherStore = defineStore('weather', () => {
                 },
             });
 
-            // Store full data
             weatherData.value = response.data;
-            console.log(weeklyForecast.value);
 
             const data = response.data;
 
@@ -195,21 +260,96 @@ export const useWeatherStore = defineStore('weather', () => {
                 currentIndex !== -1 ? data.hourly.windspeed_10m[currentIndex] : windSpeed.value;
         } catch (err: any) {
             console.error(err);
-            error.value = err.message;
+            error.value = true;
         } finally {
             loading.value = false;
         }
     }
 
-    // --------------------------------------------------
-    // EXPORT STORE
-    // --------------------------------------------------
+    // Fetch weather by coordinates (for current location)
+    async function fetchWeatherByCoords(lat: number, lon: number) {
+        loading.value = true;
+        error.value = false;
+
+        try {
+            const response = await axios.get('https://api.open-meteo.com/v1/forecast', {
+                params: {
+                    latitude: lat,
+                    longitude: lon,
+                    current_weather: true,
+                    hourly: 'temperature_2m,relative_humidity_2m,precipitation,apparent_temperature,windspeed_10m',
+                    daily: 'weather_code,temperature_2m_max,temperature_2m_min,apparent_temperature_max,apparent_temperature_min,precipitation_sum,windspeed_10m_max',
+                    timezone: 'auto',
+                },
+            });
+
+            weatherData.value = response.data;
+            const data = response.data;
+
+            // Set city + country (reverse geocode)
+            const reverse = await axios.get(`https://nominatim.openstreetmap.org/reverse`, {
+                params: { lat, lon, format: 'json' },
+            });
+
+            getCity.value =
+                reverse.data.address.city ||
+                reverse.data.address.town ||
+                reverse.data.address.village ||
+                '';
+            getCountry.value = reverse.data.address.country || '';
+
+            timezone.value = data.current_weather.time;
+            ISOCode.value = data.current_weather_units.time;
+
+            // Same parsing logic as your fetchWeather()
+            weatherTemp.value = data.current_weather.temperature;
+            windSpeed.value = data.current_weather.windspeed;
+
+            const currentTime = new Date(data.current_weather.time);
+            const hourlyTimes = data.hourly.time.map((t: string) => new Date(t));
+
+            const currentIndex = hourlyTimes.findIndex(
+                (t: Date) =>
+                    t.getUTCFullYear() === currentTime.getUTCFullYear() &&
+                    t.getUTCMonth() === currentTime.getUTCMonth() &&
+                    t.getUTCDate() === currentTime.getUTCDate() &&
+                    t.getUTCHours() === currentTime.getUTCHours()
+            );
+
+            todayForecast.value = {
+                date: data.daily.time[0],
+                tempMax: data.daily.temperature_2m_max[0],
+                tempMin: data.daily.temperature_2m_min[0],
+                apparentMax: data.daily.apparent_temperature_max[0],
+                apparentMin: data.daily.apparent_temperature_min[0],
+                weatherCode: data.daily.weather_code[0],
+            };
+
+            apparentTemperature.value =
+                currentIndex !== -1 ? data.hourly.apparent_temperature[currentIndex] : 0;
+
+            humidity.value =
+                currentIndex !== -1 ? data.hourly.relative_humidity_2m[currentIndex] : 0;
+
+            precipitation.value = currentIndex !== -1 ? data.hourly.precipitation[currentIndex] : 0;
+
+            windSpeed.value =
+                currentIndex !== -1 ? data.hourly.windspeed_10m[currentIndex] : windSpeed.value;
+        } catch (err) {
+            console.error(err);
+            error.value = true;
+        } finally {
+            loading.value = false;
+        }
+    }
 
     return {
         loading,
         error,
+        errorInput,
 
         fetchWeather,
+        fetchWeatherByCoords,
 
         getCity,
         getCountry,
@@ -235,7 +375,10 @@ export const useWeatherStore = defineStore('weather', () => {
         todayForecast,
         todayWeekday,
         todayIcon,
+        hourlyForecastWeekDays,
 
         weeklyForecast,
+        selectedHourlyForecastDay,
+        next8HoursForecast,
     };
 });

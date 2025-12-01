@@ -1,43 +1,44 @@
 {
-  "name": "weather-app",
-  "private": true,
-  "version": "0.0.0",
-  "type": "module",
-  "scripts": {
-    "dev": "vite",
-    "build": "vue-tsc -b && vite build",
-    "preview": "vite preview",
-    "lint": "eslint . --ext .ts,.js,.vue",
-    "lint:fix": "eslint . --ext .ts,.js,.vue --fix",
-    "format": "prettier --write .",
-    "type-check": "vue-tsc --noEmit",
-    "clean": "rimraf dist"
-  },
-  "dependencies": {
-    "@tailwindcss/vite": "^4.1.17",
-    "@vueuse/core": "^14.0.0",
-    "axios": "^1.13.2",
-    "pinia-plugin-persistedstate": "^4.7.1"
-  },
-  "devDependencies": {
-    "@types/node": "^24.6.0",
-    "@typescript-eslint/eslint-plugin": "^8.46.3",
-    "@typescript-eslint/parser": "^8.46.3",
-    "@vitejs/plugin-vue": "^6.0.1",
-    "@vue/tsconfig": "^0.8.1",
-    "autoprefixer": "^10.4.21",
-    "eslint": "^9.39.1",
-    "eslint-config-prettier": "^10.1.8",
-    "eslint-plugin-prettier": "^5.5.4",
-    "eslint-plugin-vue": "^10.5.1",
-    "pinia": "^3.0.4",
-    "postcss": "^8.5.6",
-    "prettier": "^3.6.2",
-    "prettier-plugin-tailwindcss": "^0.7.1",
-    "tailwindcss": "^4.1.17",
-    "typescript": "~5.9.3",
-    "vite": "^7.2.2",
-    "vue": "^3.5.24",
-    "vue-tsc": "^3.1.0"
-  }
+    "name": "weather-app",
+    "private": true,
+    "version": "0.0.0",
+    "type": "module",
+    "scripts": {
+        "dev": "vite",
+        "build": "vue-tsc -b && vite build",
+        "preview": "vite preview",
+        "lint": "eslint . --ext .ts,.js,.vue",
+        "lint:fix": "eslint . --ext .ts,.js,.vue --fix",
+        "format": "prettier --write .",
+        "type-check": "vue-tsc --noEmit",
+        "clean": "rimraf dist",
+        "phone": "npm run dev -- --host"
+    },
+    "dependencies": {
+        "@tailwindcss/vite": "^4.1.17",
+        "@vueuse/core": "^14.0.0",
+        "axios": "^1.13.2",
+        "pinia-plugin-persistedstate": "^4.7.1"
+    },
+    "devDependencies": {
+        "@types/node": "^24.6.0",
+        "@typescript-eslint/eslint-plugin": "^8.46.3",
+        "@typescript-eslint/parser": "^8.46.3",
+        "@vitejs/plugin-vue": "^6.0.1",
+        "@vue/tsconfig": "^0.8.1",
+        "autoprefixer": "^10.4.21",
+        "eslint": "^9.39.1",
+        "eslint-config-prettier": "^10.1.8",
+        "eslint-plugin-prettier": "^5.5.4",
+        "eslint-plugin-vue": "^10.5.1",
+        "pinia": "^3.0.4",
+        "postcss": "^8.5.6",
+        "prettier": "^3.6.2",
+        "prettier-plugin-tailwindcss": "^0.7.1",
+        "tailwindcss": "^4.1.17",
+        "typescript": "~5.9.3",
+        "vite": "^7.2.2",
+        "vue": "^3.5.24",
+        "vue-tsc": "^3.1.0"
+    }
 }

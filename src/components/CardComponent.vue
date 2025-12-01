@@ -8,15 +8,20 @@
         </template>
 
         <div :class="fontSize">
-            <template v-if="currentWeatherAmount">
+            <template v-if="currentWeatherAmount !== null">
                 <div class="flex items-center justify-between">
-                    <span>{{ currentWeatherAmount }} {{ weatherUnit }}</span>
+                    <template v-if="!weatherStore.getCity">
+                        <div class="my-2.5 w-2 border bg-white"><hr /></div>
+                    </template>
+                    <template v-else>
+                        <span>{{ currentWeatherAmount.toFixed(1) }} {{ weatherUnit }}</span>
+                    </template>
                 </div>
             </template>
             <template v-else>
                 <div class="flex w-full items-center justify-between">
-                    <span class="block">{{ tempMin }} {{ weatherUnit }}</span>
-                    <span class="block">{{ tempMax }} {{ weatherUnit }}</span>
+                    <span class="block">{{ tempMin?.toFixed(1) }} {{ weatherUnit }}</span>
+                    <span class="block">{{ tempMax?.toFixed(1) }} {{ weatherUnit }}</span>
                 </div>
             </template>
             <!-- <span> weather info </span> -->
@@ -25,7 +30,10 @@
 </template>
 
 <script setup lang="ts">
+import { useWeatherStore } from '../stores/weather-store';
 // TODO: Create prop to give how much grid columns are needed, text placement, icon shown, font size, etc.
+
+const weatherStore = useWeatherStore();
 
 defineProps({
     title: {

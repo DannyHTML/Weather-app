@@ -7,12 +7,13 @@
                 <button
                     type="button"
                     :class="[
-                        'flex w-full cursor-pointer items-center justify-between rounded-md px-2 duration-100 hover:bg-neutral-600',
+                        'my-2 flex w-full cursor-pointer items-center justify-between rounded-md px-2 duration-100 hover:bg-neutral-600',
                         selectedOption === option ? 'bg-neutral-600' : '',
+                        style,
                     ]"
                     @click="emit('update:selectedOption', option)"
                 >
-                    <span>{{ option }}</span>
+                    <span class="block">{{ option }}</span>
                     <template v-if="selectedOption === option">
                         <img src="/src/assets/images/icon-checkmark.svg" alt="checkmark" />
                     </template>
@@ -39,6 +40,11 @@ defineProps({
     selectedOption: {
         type: String,
         required: true,
+    },
+    style: {
+        type: String,
+        required: false,
+        default: '',
     },
 });
 
