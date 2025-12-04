@@ -70,8 +70,8 @@ export const useWeatherStore = defineStore('weather', () => {
         unitSystem.value === 'metric' ? precipitation.value : precipitation.value / 25.4
     );
 
-    // WEATHER CODE → ICON
-
+    // WEATHER CODE → ICON function
+    // TODO: I need to add more icons later, like rain and rain heavy for example
     function mapWeatherCodeToIcon(code: number): string {
         switch (code) {
             case 0:
