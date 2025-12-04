@@ -48,6 +48,7 @@
                         title="Temperature"
                         :options="temperatureOptions"
                         v-model:selectedOption="selectedTemperature"
+                        @click="console.log(selectedTemperature)"
                     />
                     <DropDownSelect
                         title="Wind Speed"
@@ -192,9 +193,11 @@ watch(
 // TODO: Gotta work on individual unit watchers
 
 // Watch local dropdown refs and update store
+// TODO: Fix the temp, windspeed and precipitation watchers, right now they update to metric or imperial
+// which causing all three to change when only one is changed.
 watch(selectedTemperature, (newVal) => {
-    if (newVal === 'Celsius') weatherStore.unitSystem = 'metric';
-    else if (newVal === 'Fahrenheit') weatherStore.unitSystem = 'imperial';
+    if (newVal === 'Celsius') weatherStore.tempUnit = 'Celsius';
+    else if (newVal === 'Fahrenheit') weatherStore.tempUnit = 'Fahrenheit';
 });
 
 watch(selectedWindSpeed, (newVal) => {
