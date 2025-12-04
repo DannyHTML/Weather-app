@@ -73,25 +73,49 @@ export const useWeatherStore = defineStore('weather', () => {
     // WEATHER CODE → ICON
 
     function mapWeatherCodeToIcon(code: number): string {
-        // TODO: I need to add more icons later, like rain and rain heavy for example
-        if (code === 0) return 'sunny';
-        if (code === 1) return 'mostly_clear';
-        if (code === 2) return 'partly_cloudy';
-        if (code === 3) return 'overcast';
-
-        if (code === 45 || code === 48) return 'fog';
-
-        if ([51, 53, 55, 56, 57, 61, 63, 65, 66, 67].includes(code)) return 'rain';
-
-        if ([80, 81, 82].includes(code)) return 'rain_heavy';
-
-        if ([71, 73, 75, 77].includes(code)) return 'snow';
-        if ([85, 86].includes(code)) return 'snow_shower';
-
-        if (code === 95) return 'storm';
-        if (code === 96 || code === 99) return 'storm_hail';
-
-        return 'overcast';
+        switch (code) {
+            case 0:
+                return 'sunny';
+            case 1:
+                return 'mostly_clear';
+            case 2:
+                return 'partly_cloudy';
+            case 3:
+                return 'overcast';
+            case 45:
+            case 48:
+                return 'fog';
+            case 51:
+            case 53:
+            case 55:
+            case 56:
+            case 57:
+            case 61:
+            case 63:
+            case 65:
+            case 66:
+            case 67:
+                return 'rain';
+            case 80:
+            case 81:
+            case 82:
+                return 'rain_heavy';
+            case 71:
+            case 73:
+            case 75:
+            case 77:
+                return 'snow';
+            case 85:
+            case 86:
+                return 'snow_shower';
+            case 95:
+                return 'storm';
+            case 96:
+            case 99:
+                return 'storm_hail';
+            default:
+                return 'overcast';
+        }
     }
 
     // TODAY INFO
