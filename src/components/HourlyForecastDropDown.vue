@@ -82,7 +82,6 @@ const toggleDropdown = () => {
 const handleMouseOver = () => {
     if (supportHover.value && weatherStore.getCity) {
         isOpen.value = true;
-        console.log('hovered');
     }
 };
 
