@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { ref, computed } from 'vue';
+import { ref, computed, h } from 'vue';
 import axios from 'axios';
 
 import fog from '@/assets/images/fog.webp';
@@ -22,6 +22,35 @@ export const useWeatherStore = defineStore('weather', () => {
     const humidity = ref<number>(0);
     const windSpeed = ref<number>(0);
     const precipitation = ref<number>(0);
+
+    const temperatureUnits = [
+        {
+            label: 'Celsius (°C)',
+            value: '°',
+        },
+        {
+            label: 'Fahrenheit (°F)',
+            value: '°F',
+        },
+    ];
+    const windSpeedUnits = [
+        { label: 'km/h', value: 'km/h' },
+        { label: 'mph', value: 'mph' },
+    ];
+    const precipitationUnits = [
+        {
+            label: 'Millimeters (mm)',
+            value: 'mm',
+        },
+        {
+            label: 'Inches (inches)',
+            value: 'inches',
+        },
+    ];
+
+    const temperatureUnit = ref<'°' | '°F'>('°');
+    const windSpeedUnit = ref<'km/h' | 'mph'>('km/h');
+    const precipitationUnit = ref<'mm' | 'inches'>('mm');
 
     const unitSystem = ref<'metric' | 'imperial'>('metric');
     const loading = ref<boolean>(false);
@@ -46,28 +75,34 @@ export const useWeatherStore = defineStore('weather', () => {
         thunder,
     };
 
-    // Units
+    const setMetricUnits = () => {
+        unitSystem.value = 'metric';
+        temperatureUnit.value = '°';
+        windSpeedUnit.value = 'km/h';
+        precipitationUnit.value = 'mm';
+    };
 
-    const tempUnit = computed(() => (unitSystem.value === 'metric' ? '°' : '°F'));
-    const windUnit = computed(() => (unitSystem.value === 'metric' ? 'km/h' : 'mph'));
-    const precipitationUnit = computed(() => (unitSystem.value === 'metric' ? 'mm' : 'inches'));
+    const setImperialUnits = () => {
+        unitSystem.value = 'imperial';
+        temperatureUnit.value = '°F';
+        windSpeedUnit.value = 'mph';
+        precipitationUnit.value = 'inches';
+    };
 
     const temperatureDisplay = computed(() =>
-        unitSystem.value === 'metric' ? weatherTemp.value : (weatherTemp.value * 9) / 5 + 32
+        temperatureUnit.value === '°' ? weatherTemp.value : (weatherTemp.value * 9) / 5 + 32
+    );
+    const windSpeedDisplay = computed(() =>
+        windSpeedUnit.value === 'km/h' ? windSpeed.value : windSpeed.value * 2.23694
+    );
+    const precipitationDisplay = computed(() =>
+        precipitationUnit.value === 'mm' ? precipitation.value : precipitation.value / 25.4
     );
 
     const apparentTemperatureDisplay = computed(() =>
         unitSystem.value === 'metric'
             ? apparentTemperature.value
             : (apparentTemperature.value * 9) / 5 + 32
-    );
-
-    const windSpeedDisplay = computed(() =>
-        unitSystem.value === 'metric' ? windSpeed.value : windSpeed.value * 2.23694
-    );
-
-    const precipitationDisplay = computed(() =>
-        unitSystem.value === 'metric' ? precipitation.value : precipitation.value / 25.4
     );
 
     // WEATHER CODE → ICON function
@@ -176,6 +211,8 @@ export const useWeatherStore = defineStore('weather', () => {
     const hourlyForecastWeekDays = computed(() => {
         return weeklyForecast.value.map((day) => day.weekdayLong);
     });
+
+    console.log('Weekly Forecast:', hourlyForecastWeekDays.value);
 
     // TODO: Fix hourly forecast to show next 8 hours from current time. It starts showing from 00:00 instead of the current time.
     const next8HoursForecast = computed(() => {
@@ -406,14 +443,21 @@ export const useWeatherStore = defineStore('weather', () => {
         windSpeed,
         precipitation,
 
+        temperatureUnits,
+        windSpeedUnits,
+        precipitationUnits,
+
+        setMetricUnits,
+        setImperialUnits,
+
         temperatureDisplay,
         apparentTemperatureDisplay,
         windSpeedDisplay,
         precipitationDisplay,
 
         unitSystem,
-        tempUnit,
-        windUnit,
+        temperatureUnit,
+        windSpeedUnit,
         precipitationUnit,
 
         todayForecast,
