@@ -63,7 +63,7 @@ type Option = {
     value: string;
 };
 
-const props = defineProps<{
+defineProps<{
     options: Option[];
 }>();
 

@@ -29,7 +29,7 @@ type Option = {
     value: string;
 };
 
-const props = defineProps<{
+defineProps<{
     title?: string;
     options: Option[];
     selectedOption: string;
