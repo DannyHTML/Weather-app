@@ -91,9 +91,7 @@ const isOpen = ref(false);
 const supportHover = ref(false);
 
 const toggleDropdown = () => {
-    if (!supportHover.value) {
-        isOpen.value = !isOpen.value;
-    }
+    isOpen.value = !isOpen.value;
 };
 
 const handleMouseOver = () => {
