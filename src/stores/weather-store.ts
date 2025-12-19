@@ -209,12 +209,12 @@ export const useWeatherStore = defineStore('weather', () => {
     });
 
     const hourlyForecastWeekDays = computed(() => {
-        return weeklyForecast.value.map((day) => day.weekdayLong);
+        return weeklyForecast.value.map((day) => ({
+            label: day.weekdayLong,
+            value: day.weekdayLong,
+        }));
     });
 
-    console.log('Weekly Forecast:', hourlyForecastWeekDays.value);
-
-    // TODO: Fix hourly forecast to show next 8 hours from current time. It starts showing from 00:00 instead of the current time.
     const next8HoursForecast = computed(() => {
         if (!weatherData.value?.hourly || !weatherData.value.current_weather) return [];
 

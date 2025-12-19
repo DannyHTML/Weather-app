@@ -24,33 +24,17 @@
 </template>
 
 <script setup lang="ts">
-import type { PropType } from 'vue';
-
 type Option = {
     label: string;
     value: string;
 };
 
-defineProps({
-    title: {
-        type: String,
-        required: false,
-        default: '',
-    },
-    options: {
-        type: Array as PropType<Option[]>,
-        required: true,
-    },
-    selectedOption: {
-        type: String,
-        required: true,
-    },
-    style: {
-        type: String,
-        required: false,
-        default: '',
-    },
-});
+const props = defineProps<{
+    title?: string;
+    options: Option[];
+    selectedOption: string;
+    style?: string;
+}>();
 
 const emit = defineEmits<{
     (event: 'update:selectedOption', option: string): void;
