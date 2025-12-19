@@ -49,11 +49,12 @@
                     :tempMin="day.tempMin"
                     :tempMax="day.tempMax"
                     :weatherUnit="weatherStore.temperatureUnit"
-                    :fontSize="'text-sm sm:text-base'"
+                    :fontSize="'text-sm'"
                 />
             </div>
         </div>
 
+        <!-- Hourly forecast section -->
         <div class="col-span-4">
             <div class="my-8 rounded-lg bg-neutral-800 p-3 lg:my-0">
                 <div class="flex items-center justify-between">
