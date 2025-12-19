@@ -58,13 +58,14 @@ const weatherStore = useWeatherStore();
 const currentSelectedDay = ref('');
 let placeholderCurrentDay = ref('');
 
-defineProps({
-    options: {
-        type: Array as () => string[],
-        required: false,
-        default: () => [],
-    },
-});
+type Option = {
+    label: string;
+    value: string;
+};
+
+const props = defineProps<{
+    options: Option[];
+}>();
 
 const emit = defineEmits<{
     (e: 'update:selected', value: string): void;
