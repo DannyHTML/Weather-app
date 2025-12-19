@@ -8,14 +8,14 @@
                 :country="weatherStore.getCountry"
                 :todayDate="formattedDate"
                 :todayTemperature="weatherStore.temperatureDisplay"
-                :temperatureUnit="weatherStore.tempUnit"
+                :temperatureUnit="weatherStore.temperatureUnit"
             />
 
             <div class="my-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
                 <CardComponent
                     :title="'Feels like'"
                     :currentWeatherAmount="weatherStore.apparentTemperatureDisplay"
-                    :weatherUnit="weatherStore.tempUnit"
+                    :weatherUnit="weatherStore.temperatureUnit"
                 />
 
                 <CardComponent
@@ -27,7 +27,7 @@
                 <CardComponent
                     :title="'Wind'"
                     :currentWeatherAmount="weatherStore.windSpeedDisplay"
-                    :weatherUnit="weatherStore.windUnit"
+                    :weatherUnit="weatherStore.windSpeedUnit"
                 />
 
                 <CardComponent
@@ -48,7 +48,7 @@
                     :image="day.icon"
                     :tempMin="day.tempMin"
                     :tempMax="day.tempMax"
-                    :weatherUnit="weatherStore.tempUnit"
+                    :weatherUnit="weatherStore.temperatureUnit"
                     :fontSize="'text-sm sm:text-base'"
                 />
             </div>
@@ -67,7 +67,7 @@
                         :time="item.time"
                         :temperature="item.temperature"
                         :image="item.icon || ''"
-                        :weatherUnit="weatherStore.tempUnit"
+                        :weatherUnit="weatherStore.temperatureUnit"
                     />
                 </div>
             </div>

@@ -46,19 +46,19 @@
 
                     <DropDownSelect
                         title="Temperature"
-                        :options="temperatureOptions"
-                        v-model:selectedOption="selectedTemperature"
+                        :options="weatherStore.temperatureUnits"
+                        v-model:selectedOption="weatherStore.temperatureUnit"
                     />
                     <DropDownSelect
                         title="Wind Speed"
-                        :options="windSpeedOptions"
-                        v-model:selectedOption="selectedWindSpeed"
+                        :options="weatherStore.windSpeedUnits"
+                        v-model:selectedOption="weatherStore.windSpeedUnit"
                     />
 
                     <DropDownSelect
                         title="Precipitation"
-                        :options="precipitationOptions"
-                        v-model:selectedOption="selectedPrecipitation"
+                        :options="weatherStore.precipitationUnits"
+                        v-model:selectedOption="weatherStore.precipitationUnit"
                     />
                 </div>
             </div>
@@ -66,34 +66,27 @@
     </div>
 </template>
 
-<!-- TODO: Gotta work on individual unit watchers -->
 <script setup lang="ts">
-import { ref, onMounted, computed, watch, useTemplateRef } from 'vue';
+import { ref, onMounted, useTemplateRef, computed } from 'vue';
 import { onClickOutside } from '@vueuse/core';
 import DropDownSelect from '../DropDownSelect.vue';
 import { useWeatherStore } from '../../stores/weather-store';
 
 const weatherStore = useWeatherStore();
 
-// TODO: Logic to pinia store for measurement units
-
-const temperatureOptions = ['Celsius', 'Fahrenheit'];
-const windSpeedOptions = ['km/h', 'mph'];
-const precipitationOptions = ['Millimeters (mm)', 'inches (in)'];
-
-const selectedTemperature = ref(weatherStore.unitSystem === 'metric' ? 'Celsius' : 'Fahrenheit');
-const selectedWindSpeed = ref(weatherStore.unitSystem === 'metric' ? 'km/h' : 'mph');
-const selectedPrecipitation = ref(
-    weatherStore.unitSystem === 'metric' ? 'Millimeters (mm)' : 'inches (in)'
-);
+const isImperial = computed(() => {
+    return (
+        weatherStore.temperatureUnit === '°F' &&
+        weatherStore.windSpeedUnit === 'mph' &&
+        weatherStore.precipitationUnit === 'inches'
+    );
+});
 
 const isOpen = ref(false);
 const supportHover = ref(false);
 
 const toggleDropdown = () => {
-    if (!supportHover.value) {
-        isOpen.value = !isOpen.value;
-    }
+    isOpen.value = !isOpen.value;
 };
 
 const handleMouseOver = () => {
@@ -142,68 +135,21 @@ const handleFocusOut = (event: FocusEvent) => {
     isOpen.value = false;
 };
 
-const isImperial = computed(() => {
-    return (
-        selectedTemperature.value === 'Fahrenheit' &&
-        selectedWindSpeed.value === 'mph' &&
-        selectedPrecipitation.value === 'inches (in)'
-    );
-});
-
 const toggleImperial = () => {
     if (weatherStore.unitSystem === 'metric') {
-        setImperialMeasurement();
+        weatherStore.setImperialUnits();
         weatherStore.unitSystem = 'imperial';
     } else {
-        setMetricMeasurement();
+        weatherStore.setMetricUnits();
         weatherStore.unitSystem = 'metric';
     }
 };
 
-const setMetricMeasurement = () => {
-    selectedTemperature.value = 'Celsius';
-    selectedWindSpeed.value = 'km/h';
-    selectedPrecipitation.value = 'Millimeters (mm)';
-    weatherStore.unitSystem = 'metric'; // update store
-};
-
-const setImperialMeasurement = () => {
-    selectedTemperature.value = 'Fahrenheit';
-    selectedWindSpeed.value = 'mph';
-    selectedPrecipitation.value = 'inches (in)';
-    weatherStore.unitSystem = 'imperial'; // update store
-};
-
 onMounted(() => {
     // Set default selections
-    setMetricMeasurement();
+    weatherStore.setMetricUnits();
 
     // Modern, type-safe hover detection
     supportHover.value = !('ontouchstart' in window || navigator.maxTouchPoints > 0);
-});
-
-watch(
-    () => weatherStore.unitSystem,
-    (newUnit) => {
-        if (newUnit === 'metric') setMetricMeasurement();
-        else setImperialMeasurement();
-    }
-);
-// TODO: Gotta work on individual unit watchers
-
-// Watch local dropdown refs and update store
-watch(selectedTemperature, (newVal) => {
-    if (newVal === 'Celsius') weatherStore.unitSystem = 'metric';
-    else if (newVal === 'Fahrenheit') weatherStore.unitSystem = 'imperial';
-});
-
-watch(selectedWindSpeed, (newVal) => {
-    if (newVal === 'km/h') weatherStore.unitSystem = 'metric';
-    else if (newVal === 'mph') weatherStore.unitSystem = 'imperial';
-});
-
-watch(selectedPrecipitation, (newVal) => {
-    if (newVal.includes('Millimeters')) weatherStore.unitSystem = 'metric';
-    else if (newVal.includes('inches')) weatherStore.unitSystem = 'imperial';
 });
 </script>
