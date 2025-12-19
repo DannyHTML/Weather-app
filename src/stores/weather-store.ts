@@ -23,6 +23,35 @@ export const useWeatherStore = defineStore('weather', () => {
     const windSpeed = ref<number>(0);
     const precipitation = ref<number>(0);
 
+    const temperatureUnits = [
+        {
+            label: 'Celsius (°C)',
+            value: '°',
+        },
+        {
+            label: 'Fahrenheit (°F)',
+            value: '°F',
+        },
+    ];
+    const windSpeedUnits = [
+        { label: 'km/h', value: 'km/h' },
+        { label: 'mph', value: 'mph' },
+    ];
+    const precipitationUnits = [
+        {
+            label: 'Millimeters (mm)',
+            value: 'mm',
+        },
+        {
+            label: 'Inches (inches)',
+            value: 'inches',
+        },
+    ];
+
+    const temperatureUnit = ref<'°' | '°F'>('°');
+    const windSpeedUnit = ref<'km/h' | 'mph'>('km/h');
+    const precipitationUnit = ref<'mm' | 'inches'>('mm');
+
     const unitSystem = ref<'metric' | 'imperial'>('metric');
     const loading = ref<boolean>(false);
     const errorInput = ref<boolean>(false);
@@ -46,14 +75,28 @@ export const useWeatherStore = defineStore('weather', () => {
         thunder,
     };
 
-    // Units
+    const setMetricUnits = () => {
+        unitSystem.value = 'metric';
+        temperatureUnit.value = '°';
+        windSpeedUnit.value = 'km/h';
+        precipitationUnit.value = 'mm';
+    };
 
-    const tempUnit = computed(() => (unitSystem.value === 'metric' ? '°' : '°F'));
-    const windUnit = computed(() => (unitSystem.value === 'metric' ? 'km/h' : 'mph'));
-    const precipitationUnit = computed(() => (unitSystem.value === 'metric' ? 'mm' : 'inches'));
+    const setImperialUnits = () => {
+        unitSystem.value = 'imperial';
+        temperatureUnit.value = '°F';
+        windSpeedUnit.value = 'mph';
+        precipitationUnit.value = 'inches';
+    };
 
     const temperatureDisplay = computed(() =>
-        unitSystem.value === 'metric' ? weatherTemp.value : (weatherTemp.value * 9) / 5 + 32
+        temperatureUnit.value === '°' ? weatherTemp.value : (weatherTemp.value * 9) / 5 + 32
+    );
+    const windSpeedDisplay = computed(() =>
+        windSpeedUnit.value === 'km/h' ? windSpeed.value : windSpeed.value * 2.23694
+    );
+    const precipitationDisplay = computed(() =>
+        precipitationUnit.value === 'mm' ? precipitation.value : precipitation.value / 25.4
     );
 
     const apparentTemperatureDisplay = computed(() =>
@@ -62,16 +105,8 @@ export const useWeatherStore = defineStore('weather', () => {
             : (apparentTemperature.value * 9) / 5 + 32
     );
 
-    const windSpeedDisplay = computed(() =>
-        unitSystem.value === 'metric' ? windSpeed.value : windSpeed.value * 2.23694
-    );
-
-    const precipitationDisplay = computed(() =>
-        unitSystem.value === 'metric' ? precipitation.value : precipitation.value / 25.4
-    );
-
-    // WEATHER CODE → ICON
-
+    // WEATHER CODE → ICON function
+    // TODO: I need to add more icons later, like rain and rain heavy for example
     function mapWeatherCodeToIcon(code: number): string {
         // TODO: I need to add more icons later, like rain and rain heavy for example
         if (code === 0) return 'sunny';
@@ -91,7 +126,7 @@ export const useWeatherStore = defineStore('weather', () => {
         if (code === 95) return 'storm';
         if (code === 96 || code === 99) return 'storm_hail';
 
-        return 'overcast';
+        return 'unknown';
     }
 
     // TODAY INFO
@@ -150,13 +185,14 @@ export const useWeatherStore = defineStore('weather', () => {
     });
 
     const hourlyForecastWeekDays = computed(() => {
-        return weeklyForecast.value.map((day) => day.weekdayLong);
+        return weeklyForecast.value.map((day) => ({
+            label: day.weekdayLong,
+            value: day.weekdayLong,
+        }));
     });
 
-    // TODO: Fix hourly forecast to show next 8 hours from current time. It starts showing from 00:00 instead of the current time.
     const next8HoursForecast = computed(() => {
         if (!weatherData.value?.hourly || !weatherData.value.current_weather) return [];
-        console.log(weatherData.value);
 
         const hourly = weatherData.value.hourly;
         const times = hourly.time.map((t: string) => new Date(t));
@@ -217,7 +253,7 @@ export const useWeatherStore = defineStore('weather', () => {
 
             if (!geoRes.data.results?.length) {
                 errorInput.value = true;
-                console.log('City not found');
+                console.error('City not found');
                 return;
             }
 
@@ -383,14 +419,21 @@ export const useWeatherStore = defineStore('weather', () => {
         windSpeed,
         precipitation,
 
+        temperatureUnits,
+        windSpeedUnits,
+        precipitationUnits,
+
+        setMetricUnits,
+        setImperialUnits,
+
         temperatureDisplay,
         apparentTemperatureDisplay,
         windSpeedDisplay,
         precipitationDisplay,
 
         unitSystem,
-        tempUnit,
-        windUnit,
+        temperatureUnit,
+        windSpeedUnit,
         precipitationUnit,
 
         todayForecast,
