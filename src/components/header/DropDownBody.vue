@@ -86,7 +86,9 @@ const isOpen = ref(false);
 const supportHover = ref(false);
 
 const toggleDropdown = () => {
-    isOpen.value = !isOpen.value;
+    if (!supportHover.value && !weatherStore.getCity) {
+        isOpen.value = !isOpen.value;
+    }
 };
 
 const handleMouseOver = () => {
